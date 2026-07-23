@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galaxy Z Flip8 & Fold8 — Prebook Dashboard</title>
+<style>
+  :root {
+    color-scheme: light;
+    --surface-1:      #fcfcfb;
+    --surface-2:      #ffffff;
+    --page-plane:     #f9f9f7;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --gridline:       #e1e0d9;
+    --baseline:       #c3c2b7;
+    --border:         rgba(11,11,11,0.10);
+    --success-text:   #006300;
+
+    --series-1: #2a78d6; /* blue - primary metric (Actual) */
+    --series-2: #eb6834; /* orange */
+    --series-3: #1baf7a; /* aqua */
+    --series-4: #eda100; /* yellow */
+    --series-5: #e87ba4; /* magenta */
+    --series-6: #008300; /* green */
+    --series-7: #4a3aa7; /* violet */
+    --series-8: #e34948; /* red */
+    --target-bar: #c3c2b7; /* muted reference bar */
+
+    --status-good: #0ca30c;
+    --status-warning: #fab219;
+    --status-serious: #ec835a;
+    --status-critical: #d03b3b;
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface-1:      #1a1a19;
+    --surface-2:      #202020;
+    --page-plane:     #0d0d0d;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #898781;
+    --gridline:       #2c2c2a;
+    --baseline:       #383835;
+    --border:         rgba(255,255,255,0.10);
+    --success-text:   #0ca30c;
+
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #c98500;
+    --series-5: #d55181;
+    --series-6: #008300;
+    --series-7: #9085e9;
+    --series-8: #e66767;
+    --target-bar: #383835;
+
+    --status-good: #0ca30c;
+    --status-warning: #fab219;
+    --status-serious: #ec835a;
+    --status-critical: #d03b3b;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--page-plane);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, "Segoe UI", "Noto Sans Thai", sans-serif;
+  }
+  body { padding: 20px 24px 60px; }
+  .wrap { max-width: 1400px; margin: 0 auto; }
+
+  /* ---------- Header (Samsung blue #1428A0) ---------- */
+  .header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap; margin-bottom: 18px;
+    background: linear-gradient(135deg, #1428A0 0%, #0d1c78 100%);
+    padding: 20px 24px; border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(20,40,160,0.25);
+  }
+  .header h1 { font-size: 22px; margin: 0 0 4px; font-weight: 700; color: #ffffff; }
+  .header .sub { color: rgba(255,255,255,0.82); font-size: 13px; margin: 0; }
+  .header .sub b { color: #ffffff; }
+  .header-right { display: flex; align-items: center; gap: 10px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.28);
+    border-radius: 999px; padding: 6px 12px; font-size: 12.5px; color: rgba(255,255,255,0.92);
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: #6ee7b7; }
+  .theme-btn {
+    border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.14); color: #ffffff;
+    border-radius: 999px; padding: 7px 14px; font-size: 12.5px; cursor: pointer;
+  }
+  .theme-btn:hover { background: rgba(255,255,255,0.26); }
+
+  /* ---------- Filter bar ---------- */
+  .filterbar {
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px;
+    padding: 12px 14px; margin-bottom: 18px;
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .filterbar .fgroup { position: relative; }
+  .filter-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 3px; display: block; }
+  .msbtn {
+    border: 1px solid var(--border); background: var(--surface-1); color: var(--text-primary);
+    border-radius: 9px; padding: 8px 10px; font-size: 13px; cursor: pointer;
+    display: flex; align-items: center; gap: 8px; min-width: 128px; justify-content: space-between;
+  }
+  .msbtn:hover { border-color: var(--text-muted); }
+  .msbtn .count-chip {
+    background: var(--series-1); color: #fff; border-radius: 999px; font-size: 10.5px;
+    padding: 1px 6px; font-weight: 600;
+  }
+  .msbtn .caret { color: var(--text-muted); font-size: 10px; }
+  .mspanel {
+    position: absolute; top: calc(100% + 6px); left: 0; z-index: 40;
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.16); padding: 8px; min-width: 240px;
+    max-height: 320px; overflow-y: auto; display: none;
+  }
+  .mspanel.open { display: block; }
+  .msopt {
+    display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 7px;
+    cursor: pointer; font-size: 13px; color: var(--text-primary);
+  }
+  .msopt:hover { background: var(--page-plane); }
+  .msopt.disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+  .msopt input { accent-color: var(--series-1); width: 15px; height: 15px; flex: none; }
+  .msopt .oplabel { flex: 1; }
+  .msopt .opcount { color: var(--text-muted); font-size: 11.5px; }
+  .mspanel-actions { display: flex; justify-content: space-between; padding: 6px 8px 2px; border-top: 1px solid var(--gridline); margin-top: 4px; }
+  .mspanel-actions button { border: none; background: none; color: var(--series-1); font-size: 12px; cursor: pointer; padding: 4px; }
+  .ms-search-input {
+    position: sticky; top: 0; z-index: 1; width: 100%; box-sizing: border-box;
+    border: 1px solid var(--border); background: var(--surface-1); color: var(--text-primary);
+    border-radius: 7px; padding: 6px 9px; font-size: 12.5px; margin-bottom: 6px;
+  }
+  .ms-search-input:focus { outline: 2px solid var(--series-1); outline-offset: -1px; }
+  .mspanel[data-panel="shopName"] { min-width: 300px; max-height: 380px; }
+
+  .searchbox {
+    border: 1px solid var(--border); background: var(--surface-1); color: var(--text-primary);
+    border-radius: 9px; padding: 8px 12px; font-size: 13px; min-width: 220px;
+  }
+  .searchbox:focus { outline: 2px solid var(--series-1); outline-offset: -1px; }
+  .reset-btn {
+    border: 1px solid var(--border); background: transparent; color: var(--text-secondary);
+    border-radius: 9px; padding: 8px 12px; font-size: 12.5px; cursor: pointer; margin-left: auto;
+  }
+  .reset-btn:hover { color: var(--text-primary); border-color: var(--text-muted); }
+  .match-count { font-size: 12.5px; color: var(--text-secondary); white-space: nowrap; }
+  .match-count b { color: var(--text-primary); }
+
+  /* ---------- KPI tiles ---------- */
+  .kpi-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 18px;
+  }
+  @media (max-width: 1100px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+  .tile {
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px;
+    padding: 14px 16px;
+  }
+  .tile .label { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; }
+  .tile .value { font-size: 26px; font-weight: 700; line-height: 1.1; }
+  .tile .value small { font-size: 14px; font-weight: 600; color: var(--text-secondary); }
+  .tile .foot { font-size: 11.5px; color: var(--text-muted); margin-top: 6px; }
+  .meter-track { height: 6px; border-radius: 4px; background: var(--gridline); margin-top: 10px; overflow: hidden; }
+  .meter-fill { height: 100%; border-radius: 4px; }
+
+  /* ---------- Section / card ---------- */
+  .tabnav { display: flex; gap: 8px; margin-bottom: 18px; border-bottom: 1px solid var(--gridline); }
+  .tabnav-btn {
+    border: none; background: none; color: var(--text-secondary); font-size: 13.5px; font-weight: 600;
+    padding: 10px 4px; cursor: pointer; position: relative; margin-right: 14px;
+  }
+  .tabnav-btn:hover { color: var(--text-primary); }
+  .tabnav-btn.active { color: var(--series-1); }
+  .tabnav-btn.active::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--series-1); border-radius: 2px 2px 0 0;
+  }
+  .tab-panel[hidden] { display: none; }
+  .section-title { font-size: 15px; font-weight: 700; margin: 26px 0 10px; display: flex; align-items: center; gap: 8px; }
+  .section-title .hint { font-size: 12px; font-weight: 400; color: var(--text-muted); }
+  .card {
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px;
+    padding: 16px; margin-bottom: 16px;
+  }
+  .card h3 { font-size: 13.5px; margin: 0 0 2px; font-weight: 700; }
+  .card .card-sub { font-size: 11.5px; color: var(--text-muted); margin-bottom: 10px; }
+  .grid-2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; }
+  .grid-2b { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 1000px) { .grid-2, .grid-2b { grid-template-columns: 1fr; } }
+
+  .legend-row { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px; font-size: 12px; color: var(--text-secondary); }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-swatch { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+  .legend-line { width: 14px; height: 2px; flex: none; }
+
+  /* tooltip */
+  .viz-tooltip {
+    position: fixed; pointer-events: none; z-index: 100; background: var(--text-primary); color: var(--surface-1);
+    font-size: 12px; padding: 7px 10px; border-radius: 8px; box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    opacity: 0; transition: opacity .08s ease; max-width: 240px;
+  }
+  .viz-tooltip .tt-title { font-weight: 700; margin-bottom: 3px; }
+  .viz-tooltip .tt-row { display: flex; justify-content: space-between; gap: 10px; }
+  .viz-tooltip .tt-row .k { opacity: .8; }
+
+  /* bar chart */
+  .barrow { display: flex; align-items: center; gap: 10px; padding: 5px 0; }
+  .barrow .lbl { width: 168px; flex: none; font-size: 12px; color: var(--text-secondary); text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .barrow .track { flex: 1; position: relative; height: 22px; }
+  .barrow .track .bg { position: absolute; left: 0; top: 8px; height: 6px; width: 100%; background: var(--gridline); border-radius: 3px; }
+  .barrow .track .fill { position: absolute; left: 0; top: 6px; height: 10px; border-radius: 4px 4px 4px 4px; cursor: pointer; }
+  .barrow .val { width: 132px; flex: none; font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }
+  .barrow .val .val-pct { color: var(--text-muted); font-weight: 500; font-size: 11px; }
+
+  .hbar-item { margin-bottom: 10px; }
+  .hbar-top { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
+  .hbar-top .nm { color: var(--text-primary); font-weight: 600; }
+  .hbar-top .pct { font-variant-numeric: tabular-nums; color: var(--text-secondary); }
+  .hbar-top .contrib { font-variant-numeric: tabular-nums; color: var(--text-muted); font-size: 11px; margin-left: 6px; }
+  .hbar-track { height: 12px; background: var(--gridline); border-radius: 5px; overflow: hidden; cursor: pointer; position: relative; }
+  .hbar-fill { height: 100%; border-radius: 5px; transition: width .2s; }
+
+  /* status pill */
+  .pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+  .pill.good { background: color-mix(in srgb, var(--status-good) 16%, transparent); color: var(--status-good); }
+  .pill.warning { background: color-mix(in srgb, var(--status-warning) 20%, transparent); color: #9a6700; }
+  :root[data-theme="dark"] .pill.warning { color: var(--status-warning); }
+  .pill.serious { background: color-mix(in srgb, var(--status-serious) 18%, transparent); color: #b1461f; }
+  :root[data-theme="dark"] .pill.serious { color: var(--status-serious); }
+  .pill.critical { background: color-mix(in srgb, var(--status-critical) 16%, transparent); color: var(--status-critical); }
+
+  /* donut */
+  .donut-wrap { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .donut-legend { flex: 1; min-width: 180px; }
+  .donut-legend .drow { display: flex; align-items: center; gap: 8px; font-size: 12.5px; padding: 5px 0; cursor: pointer; }
+  .donut-legend .drow:hover { opacity: .8; }
+  .donut-legend .sw { width: 11px; height: 11px; border-radius: 3px; flex: none; }
+  .donut-legend .nm { flex: 1; color: var(--text-primary); }
+  .donut-legend .n { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--text-secondary); font-size: 12px; }
+
+  /* table */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  thead th {
+    text-align: left; padding: 8px 10px; color: var(--text-muted); font-weight: 600; font-size: 11px;
+    text-transform: uppercase; letter-spacing: .03em; border-bottom: 1px solid var(--gridline);
+    cursor: pointer; white-space: nowrap; user-select: none;
+  }
+  thead th:hover { color: var(--text-primary); }
+  thead th .arrow { font-size: 9px; margin-left: 3px; opacity: .6; }
+  tbody td { padding: 8px 10px; border-bottom: 1px solid var(--gridline); color: var(--text-secondary); white-space: nowrap; }
+  tbody td.strong { color: var(--text-primary); font-weight: 600; }
+  tbody tr:hover td { background: var(--page-plane); }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .table-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px; }
+  .chip-toggle {
+    border: 1px solid var(--border); background: var(--surface-1); border-radius: 999px; padding: 6px 12px;
+    font-size: 12px; cursor: pointer; color: var(--text-secondary);
+  }
+  .chip-toggle.active { background: var(--series-1); color: #fff; border-color: var(--series-1); }
+  .pager { display: flex; align-items: center; gap: 8px; justify-content: flex-end; margin-top: 10px; font-size: 12px; color: var(--text-secondary); }
+  .pager button {
+    border: 1px solid var(--border); background: var(--surface-1); color: var(--text-primary); border-radius: 7px;
+    padding: 5px 10px; cursor: pointer; font-size: 12px;
+  }
+  .pager button:disabled { opacity: .4; cursor: not-allowed; }
+
+  .empty-state { text-align: center; padding: 30px 10px; color: var(--text-muted); font-size: 13px; }
+
+  footer { text-align: center; color: var(--text-muted); font-size: 11.5px; margin-top: 30px; }
+
+  .stack { display: flex; flex-direction: column; gap: 2px; }
+</style>
+</head>
+<body>
+<div class="viz-tooltip" id="tooltip"></div>
+
+<div class="wrap">
+  <div class="header">
+    <div>
+      <h1>Galaxy Z Flip8 &amp; Fold8 — Prebook Performance Dashboard</h1>
+      <p class="sub">สรุปเป้าหมายและยอดจอง Samsung Galaxy Z Flip8 / Fold8 / Fold8 Ultra ทุกสาขา True Shop &nbsp;•&nbsp; ข้อมูล ณ <b id="asOfText">-</b></p>
+    </div>
+    <div class="header-right">
+      <span class="badge"><span class="dot"></span> Prebook เริ่ม 22 ก.ค. 2026</span>
+      <button class="theme-btn" id="themeToggle">🌙 Dark mode</button>
+    </div>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filterbar" id="filterbar">
+    <div class="fgroup" data-dim="region">
+      <button class="msbtn" data-target="region"><span>ภาค (Region)</span><span class="caret">▾</span></button>
+      <div class="mspanel" data-panel="region"></div>
+    </div>
+    <div class="fgroup" data-dim="area">
+      <button class="msbtn" data-target="area"><span>พื้นที่ (Area)</span><span class="caret">▾</span></button>
+      <div class="mspanel" data-panel="area"></div>
+    </div>
+    <div class="fgroup" data-dim="shopName">
+      <button class="msbtn" data-target="shopName"><span>ชื่อสาขา (Shop Name)</span><span class="caret">▾</span></button>
+      <div class="mspanel" data-panel="shopName"></div>
+    </div>
+    <div class="fgroup" data-dim="type">
+      <button class="msbtn" data-target="type"><span>รูปแบบร้าน</span><span class="caret">▾</span></button>
+      <div class="mspanel" data-panel="type"></div>
+    </div>
+    <div class="fgroup" data-dim="size">
+      <button class="msbtn" data-target="size"><span>ขนาดร้าน</span><span class="caret">▾</span></button>
+      <div class="mspanel" data-panel="size"></div>
+    </div>
+    <div class="fgroup" data-dim="status">
+      <button class="msbtn" data-target="status"><span>สถานะร้าน</span><span class="caret">▾</span></button>
+      <div class="mspanel" data-panel="status"></div>
+    </div>
+    <div class="fgroup" data-dim="model">
+      <button class="msbtn" data-target="model"><span>รุ่น (Model)</span><span class="caret">▾</span></button>
+      <div class="mspanel" data-panel="model"></div>
+    </div>
+    <input type="text" class="searchbox" id="searchInput" placeholder="ค้นหาสาขา / รหัสสาขา...">
+    <span class="match-count" id="matchCount"></span>
+    <button class="reset-btn" id="resetBtn">✕ ล้างตัวกรองทั้งหมด</button>
+  </div>
+
+  <!-- TAB NAV -->
+  <div class="tabnav" id="tabnav">
+    <button class="tabnav-btn active" data-tab="overview">ภาพรวม (Overview)</button>
+    <button class="tabnav-btn" data-tab="detail">Galaxy_Z8_Series_Detail</button>
+  </div>
+
+  <div class="tab-panel" id="tab-overview">
+
+  <!-- KPI -->
+  <div class="kpi-grid" id="kpiGrid"></div>
+
+  <div class="section-title">เป้าหมาย vs ยอดจอง (Prebook Units)</div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>%ACH Prebook แยกตามพื้นที่ (Area)</h3>
+      <div class="card-sub">เรียงจากสัดส่วนความสำเร็จเป้าหมายมากไปน้อย — สีบ่งบอกสถานะความคืบหน้า</div>
+      <div id="areaAchChart"></div>
+      <div class="legend-row">
+        <div class="legend-item"><span class="legend-swatch" style="background:var(--status-good)"></span>ดี (≥80%)</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:var(--status-warning)"></span>ปานกลาง (40–79%)</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:var(--status-critical)"></span>ต้องเร่ง (&lt;40%)</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>เป้าหมาย vs ยอดจอง แยกตามภาค (Region)</h3>
+      <div class="card-sub">จำนวนเครื่อง (units) — แท่งเทาคือเป้าหมาย แท่งฟ้าคือยอดจองจริง</div>
+      <div id="regionBarChart"></div>
+      <div class="legend-row">
+        <div class="legend-item"><span class="legend-swatch" style="background:var(--target-bar)"></span>Target Prebook</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:var(--series-1)"></span>Actual Prebook</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">รายละเอียดยอดจอง (Booking Mix)</div>
+  <div class="grid-2b">
+    <div class="card">
+      <h3>สัดส่วนยอดจองตามรุ่น (Model)</h3>
+      <div class="card-sub" id="modelDonutSub">จากยอดจองที่ตรงกับตัวกรองปัจจุบัน</div>
+      <div id="modelDonut"></div>
+    </div>
+    <div class="card">
+      <h3>ยอดจองตามสี (Color) และความจุ (Capacity)</h3>
+      <div class="card-sub">จำนวนเครื่องที่จอง</div>
+      <div id="colorBarChart"></div>
+    </div>
+  </div>
+
+  <div class="section-title">TOP 10 สาขายอดจองสูงสุด (by QTY)</div>
+  <div class="card">
+    <div id="topShopsChart"></div>
+  </div>
+
+  <div class="section-title">ตารางข้อมูลสาขา (Shop Performance) <span class="hint">คลิกหัวคอลัมน์เพื่อจัดเรียง</span></div>
+  <div class="card">
+    <div class="table-toolbar">
+      <div>
+        <button class="chip-toggle" id="zeroToggle">แสดงเฉพาะสาขาที่มี Target แต่ยังไม่มียอดจอง</button>
+      </div>
+      <div class="match-count" id="shopTableCount"></div>
+    </div>
+    <div class="table-wrap">
+      <table id="shopTable">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="pager" id="shopPager"></div>
+  </div>
+
+  <div class="section-title">ตารางรายการจอง (Booking Detail) <span class="hint">คลิกหัวคอลัมน์เพื่อจัดเรียง</span></div>
+  <div class="card">
+    <div class="table-toolbar">
+      <div class="match-count" id="bookingTableCount"></div>
+      <button class="chip-toggle" id="exportCsvBtn">⬇ Export CSV</button>
+    </div>
+    <div class="table-wrap">
+      <table id="bookingTable">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="pager" id="bookingPager"></div>
+  </div>
+
+  </div><!-- /tab-overview -->
+
+  <div class="tab-panel" id="tab-detail" hidden>
+
+    <div class="card" style="margin-bottom:18px;">
+      <div class="card-sub" style="margin-bottom:0;">วิเคราะห์เจาะลึกจากข้อมูลรายการจองดิบ (Sheet: <b style="color:var(--text-primary)">Galaxy_Z8_Series</b>) เฉพาะ Prodgroup = HANDSET — สะท้อนช่องทาง พฤติกรรม และเงื่อนไขการจองของลูกค้าที่จองจริง ไม่รวมข้อมูลส่วนบุคคล (ชื่อ/เลขบัตร/เบอร์โทร) &nbsp;•&nbsp; ตัวกรองด้านบนมีผลกับข้อมูลในแท็บนี้ด้วย</div>
+    </div>
+
+    <div class="kpi-grid" id="detailKpiGrid"></div>
+
+    <div class="section-title">ช่องทางการจองและการชำระเงิน</div>
+    <div class="grid-2b">
+      <div class="card">
+        <h3>ช่องทางการจอง (Source)</h3>
+        <div class="card-sub">ลูกค้าจองผ่านช่องทางใดมากที่สุด</div>
+        <div id="sourceChart"></div>
+      </div>
+      <div class="card">
+        <h3>วิธีชำระเงินมัดจำ (Payment Method)</h3>
+        <div class="card-sub">วิธีที่ลูกค้าเลือกชำระเงินมัดจำจอง</div>
+        <div id="paymentChart"></div>
+      </div>
+    </div>
+
+    <div class="section-title">เงื่อนไขลูกค้าและแพ็กเกจที่เลือก</div>
+    <div class="grid-2b">
+      <div class="card">
+        <h3>กลุ่ม/เงื่อนไขลูกค้า</h3>
+        <div class="card-sub">สิทธิ์ที่ลูกค้าใช้ในการจอง (Promotions.1)</div>
+        <div id="segmentChart"></div>
+      </div>
+      <div class="card">
+        <h3>แพ็กเกจรายเดือนที่เลือก</h3>
+        <div class="card-sub">เฉพาะรายการที่ซื้อพร้อมแพ็กเกจ (Promotions.2)</div>
+        <div id="packageChart"></div>
+      </div>
+    </div>
+
+    <div class="grid-2b">
+      <div class="card">
+        <h3>รูปแบบการซื้อ</h3>
+        <div class="card-sub">เครื่องพร้อมแพ็กเกจ vs เครื่องเปล่า</div>
+        <div id="purchaseTypeDonut"></div>
+      </div>
+      <div class="card">
+        <h3>ประเภทหน้าร้าน (Shop Sub Type)</h3>
+        <div class="card-sub">ช่องทางหน้าร้านที่รับจอง</div>
+        <div id="shopSubTypeChart"></div>
+      </div>
+    </div>
+
+    <div class="section-title">ปฏิบัติการหน้าร้านและส่วนลด</div>
+    <div class="grid-2b">
+      <div class="card">
+        <h3>ช่วงเวลานัดรับเครื่อง (Pick-up Time Slot)</h3>
+        <div class="card-sub">ใช้วางแผนกำลังคนหน้าร้านวันรับเครื่อง</div>
+        <div id="pickupTimeChart"></div>
+      </div>
+      <div class="card">
+        <h3>สถานะใบเสร็จ (Receipt Status)</h3>
+        <div class="card-sub">ความคืบหน้าการดำเนินเอกสาร</div>
+        <div id="receiptStatusDonut"></div>
+      </div>
+    </div>
+
+    <div class="section-title">กำหนดการรับเครื่อง (Pick-up Schedule) <span class="hint">อ้างอิงวันที่ลูกค้านัดรับเครื่อง</span></div>
+    <div class="card">
+      <div class="card-sub">จำนวนลูกค้าที่นัดรับเครื่อง แยกตามวันที่รับเครื่องจริง (Pick-up Date) — ใช้วางแผนสต็อกและกำลังคนหน้าร้านล่วงหน้า</div>
+      <div id="pickupDateChart"></div>
+    </div>
+
+    <div class="section-title">พื้นที่ลูกค้าและมูลค่าส่วนลด Trade-in</div>
+    <div class="grid-2b">
+      <div class="card">
+        <h3>จังหวัดของลูกค้า (Top Provinces)</h3>
+        <div class="card-sub">ที่อยู่ตามใบเสร็จ — อาจต่างจากพื้นที่สาขาที่รับเครื่อง</div>
+        <div id="provinceChart"></div>
+      </div>
+      <div class="card">
+        <h3>มูลค่าส่วนลด Trade-in ต่อรายการ</h3>
+        <div class="card-sub">ส่วนต่างระหว่างราคาปกติกับราคาที่ลูกค้าจ่ายจริง</div>
+        <div id="discountChart"></div>
+      </div>
+    </div>
+
+    <div class="section-title">ความเร็วการจองนับจากเปิดจอง (Booking Pace)</div>
+    <div class="card">
+      <div class="card-sub">จำนวนรายการจองต่อชั่วโมง ตั้งแต่เปิดให้จอง — ดูจังหวะความสนใจของลูกค้าในชั่วโมงแรก ๆ</div>
+      <div id="paceChart"></div>
+    </div>
+
+  </div><!-- /tab-detail -->
+
+  <footer>
+    Galaxy Z Flip8 &amp; Fold8 Prebook Dashboard — สร้างจากไฟล์ Refresh_Prebook_Galaxy_Z8_Series.xlsx &nbsp;•&nbsp; ข้อมูล ณ <span id="asOfText2">-</span>
+  </footer>
+</div>
+
+<script>
+const DATA = {"asOf": "2026-07-23 08:30:47", "shops": [{"code": 80100477, "name": "True Shop Central Ladprao", "type": "Matching", "area": "BMA I - North West", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 33, "targetAmount": 2236400, "actualPrebook": 1, "actualAmount": 42900}, {"code": 80100480, "name": "True Shop The Mall Ngamwongwan 3Fl.", "type": "Matching", "area": "BMA I - North West", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 32, "targetAmount": 2166500, "actualPrebook": 1, "actualAmount": 69900}, {"code": 80100807, "name": "True Shop Lotus's Nakhon In", "type": "Non Matching", "area": "BMA I - North West", "size": "S", "region": "BMA", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101180, "name": "True Shop Wongsawang Town Center", "type": "Non Matching", "area": "BMA I - North West", "size": "M", "region": "BMA", "status": "Open", "targetPrebook": 30, "targetAmount": 1999800, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101182, "name": "True Shop Central Chaengwattana", "type": "Matching", "area": "BMA I - North West", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 33, "targetAmount": 2193500, "actualPrebook": 1, "actualAmount": 69900}, {"code": 80101185, "name": "True Shop Central West Gate", "type": "Matching", "area": "BMA I - North West", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 32, "targetAmount": 2123600, "actualPrebook": 1, "actualAmount": 69900}, {"code": 80101217, "name": "True Shop Big C Sukhapibal 5", "type": "Non Matching", "area": "BMA I - North West", "size": "S", "region": "BMA", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101218, "name": "True Shop Big C Sainoi Nonthaburi", "type": "Non Matching", "area": "BMA I - North West", "size": "S", "region": "BMA", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101223, "name": "True Shop Gateway Bangsue", "type": "Non Matching", "area": "BMA I - North West", "size": "S", "region": "BMA", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101264, "name": "True Shop Central Plaza Ramindra 1FL.", "type": "Non Matching", "area": "BMA I - North West", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 29, "targetAmount": 1852000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101271, "name": "True Shop Big C Chaengwattana", "type": "Non Matching", "area": "BMA I - North West", "size": "M", "region": "BMA", "status": "Open", "targetPrebook": 29, "targetAmount": 1948900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101305, "name": "True Shop Robinson Srisaman", "type": "Matching", "area": "BMA I - North West", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 28, "targetAmount": 1871000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101584, "name": "True Shop Robinson Ratchapruek", "type": "Non Matching", "area": "BMA I - North West", "size": "M", "region": "BMA", "status": "Open", "targetPrebook": 29, "targetAmount": 1871000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101623, "name": "True Shop Chaeng Watthana Government Complex", "type": "Non Matching", "area": "BMA I - North West", "size": "S", "region": "BMA", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101627, "name": "True Shop Central Westville", "type": "Matching", "area": "BMA I - North West", "size": "M", "region": "BMA", "status": "Open", "targetPrebook": 32, "targetAmount": 2193500, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101689, "name": "True Shop Big C Sukhaphiban 5 (D)", "type": "COCO", "area": "BMA I - North West", "size": "S", "region": "BMA", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101698, "name": "True Shop Central West Gate (D)", "type": "Hall", "area": "BMA I - North West", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 18, "targetAmount": 1221000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101702, "name": "True Shop Central Plaza Chaengwattana (D)", "type": "Hall", "area": "BMA I - North West", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 18, "targetAmount": 1221000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101713, "name": "True Shop Central North Ville", "type": "Matching", "area": "BMA I - North West", "size": "M", "region": "BMA", "status": "Open", "targetPrebook": 35, "targetAmount": 2298300, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100483, "name": "True Shop The Mall Thapra", "type": "Matching", "area": "BMA II - South West", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 35, "targetAmount": 2298300, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100484, "name": "True Shop The Mall Bangkae 2Fl.", "type": "Matching", "area": "BMA II - South West", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 35, "targetAmount": 2298300, "actualPrebook": 2, "actualAmount": 112800}, {"code": 80100565, "name": "True Shop Central Rama 2", "type": "Matching", "area": "BMA II - South West", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 36, "targetAmount": 2368200, "actualPrebook": 3, "actualAmount": 201700}, {"code": 80100566, "name": "True Shop Central Rama 2 (H)", "type": "Non Matching", "area": "BMA II - South West", "size": "M", "region": "BMA", "status": "Open", "targetPrebook": 35, "targetAmount": 2298300, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100626, "name": "True Shop Central Pinklao 3Fl.", "type": "Matching", "area": "BMA II - South West", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 36, "targetAmount": 2411100, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100736, "name": "True Shop Lotus's Bangpakok", "type": "Non Matching", "area": "BMA II - South West", "size": "S", "region": "BMA", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100928, "name": "True Shop Seacon Bangkae", "type": "Matching", "area": "BMA II - South West", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 33, "targetAmount": 2193500, "actualPrebook": 1, "actualAmount": 42900}, {"code": 80101679, "name": "True Shop Seacon Bangkae (D)", "type": "COCO", "area": "BMA II - South West", "size": "M", "region": "BMA", "status": "Open", "targetPrebook": 2, "targetAmount": 93800, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100925, "name": "True Shop Fashion Island", "type": "Matching", "area": "BMA III - North East", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 36, "targetAmount": 2411100, "actualPrebook": 1, "actualAmount": 61900}, {"code": 80101123, "name": "True Shop Lotus's Sukhapibal 3", "type": "Non Matching", "area": "BMA III - North East", "size": "M", "region": "BMA", "status": "Open", "targetPrebook": 33, "targetAmount": 2193500, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101340, "name": "True Shop Future Park Rangsit", "type": "Matching", "area": "BMA III - North East", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 36, "targetAmount": 2368200, "actualPrebook": 1, "actualAmount": 61900}, {"code": 80101341, "name": "True Shop Future Park Rangsit (H)", "type": "Matching", "area": "BMA III - North East", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 35, "targetAmount": 2298300, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101350, "name": "True Shop iPlace Latkrabang", "type": "Non Matching", "area": "BMA III - North East", "size": "S", "region": "BMA", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101706, "name": "True Shop Fashion Island (D)", "type": "Hall", "area": "BMA III - North East", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 18, "targetAmount": 1221000, "actualPrebook": 1, "actualAmount": 61900}, {"code": 80101707, "name": "True Shop Future Park Rangsit (2 nd.) (D) ", "type": "Hall", "area": "BMA III - North East", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 18, "targetAmount": 1221000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101708, "name": "True Shop Future Park Rangsit (G Fl.) (D)", "type": "Hall", "area": "BMA III - North East", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 18, "targetAmount": 1221000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100481, "name": "True Shop The Mall Bangkapi", "type": "Matching", "area": "BMA IV - South East", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 36, "targetAmount": 2368200, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100805, "name": "True Shop Lotus's Phatthanakan", "type": "Non Matching", "area": "BMA IV - South East", "size": "S", "region": "BMA", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101070, "name": "True Shop Mega Bangna", "type": "Matching", "area": "BMA IV - South East", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 36, "targetAmount": 2368200, "actualPrebook": 1, "actualAmount": 61900}, {"code": 80101071, "name": "True Shop Seacon Square 2", "type": "Matching", "area": "BMA IV - South East", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 36, "targetAmount": 2368200, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101296, "name": "True Shop Paradise Park Srinakarin", "type": "Non Matching", "area": "BMA IV - South East", "size": "M", "region": "BMA", "status": "Open", "targetPrebook": 10, "targetAmount": 588000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101418, "name": "True Shop Imperial World Samrong", "type": "Non Matching", "area": "BMA IV - South East", "size": "M", "region": "BMA", "status": "Open", "targetPrebook": 32, "targetAmount": 2123600, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101632, "name": "True Shop Lotus's Bangna-trad", "type": "Non Matching", "area": "BMA IV - South East", "size": "M", "region": "BMA", "status": "Open", "targetPrebook": 21, "targetAmount": 1300900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101709, "name": "True Shop Mega Bangna (D)", "type": "Hall", "area": "BMA IV - South East", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 18, "targetAmount": 1221000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100478, "name": "True Shop Terminal 21", "type": "Matching", "area": "BMA V - Central", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 35, "targetAmount": 2298300, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100622, "name": "True Shop Central Rama 9 4Fl.", "type": "Matching", "area": "BMA V - Central", "size": "L", "region": "BMA", "status": "Closed", "targetPrebook": 23, "targetAmount": 1424700, "actualPrebook": 1, "actualAmount": 50900}, {"code": 80100623, "name": "True Shop Central Rama 9", "type": "Matching", "area": "BMA V - Central", "size": "M", "region": "BMA", "status": "Open", "targetPrebook": 35, "targetAmount": 2298300, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100715, "name": "True Shop Fortune Town 1Fl.", "type": "Non Matching", "area": "BMA V - Central", "size": "M", "region": "BMA", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100729, "name": "True Shop Station Lotus's Rama 4", "type": "Non Matching", "area": "BMA V - Central", "size": "S", "region": "BMA", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100836, "name": "True Shop Central World 4Fl.", "type": "Matching", "area": "BMA V - Central", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 36, "targetAmount": 2368200, "actualPrebook": 1, "actualAmount": 69900}, {"code": 80101068, "name": "True Shop Central Rama 3", "type": "Matching", "area": "BMA V - Central", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 35, "targetAmount": 2298300, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101186, "name": "True Shop Central Festival East Ville", "type": "Matching", "area": "BMA V - Central", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 35, "targetAmount": 2298300, "actualPrebook": 1, "actualAmount": 61900}, {"code": 80101201, "name": "True Kiosk The Eight Thonglor", "type": "Non Matching", "area": "BMA V - Central", "size": "S", "region": "BMA", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101221, "name": "True Shop Emquartier", "type": "Matching", "area": "BMA V - Central", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 35, "targetAmount": 2298300, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101269, "name": "True Shop Mahboon Krong 4Fl.", "type": "Non Matching", "area": "BMA V - Central", "size": "M", "region": "BMA", "status": "Open", "targetPrebook": 35, "targetAmount": 2298300, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101347, "name": "True Shop U Chu Liang Building", "type": "Non Matching", "area": "BMA V - Central", "size": "S", "region": "BMA", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101349, "name": "True Shop Silom Complex", "type": "Non Matching", "area": "BMA V - Central", "size": "L", "region": "BMA", "status": "Open", "targetPrebook": 35, "targetAmount": 2298300, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101363, "name": "True Shop at Chamchuri Square 1", "type": "Non Matching", "area": "BMA V - Central", "size": "M", "region": "BMA", "status": "Open", "targetPrebook": 10, "targetAmount": 588000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101630, "name": "Kiosk Lotus's Ramindra", "type": "Non Matching", "area": "BMA V - Central", "size": "S", "region": "BMA", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101633, "name": "True Shop Makro Sri Ayutthaya", "type": "Non Matching", "area": "BMA V - Central", "size": "S", "region": "BMA", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101667, "name": "True Shop Supreme Complex (D)", "type": "COCO", "area": "BMA V - Central", "size": "S", "region": "BMA", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100725, "name": "True Shop Lotus's Bang Pa-In Ayudhaya", "type": "Non Matching", "area": "UPC - Central", "size": "S", "region": "UPC II", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100763, "name": "True Shop The Walk Nakornsawan", "type": "Non Matching", "area": "UPC - Central", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 28, "targetAmount": 1860000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100796, "name": "True Shop Lotus's Khok Samrong Lopburi", "type": "Non Matching", "area": "UPC - Central", "size": "S", "region": "UPC II", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100841, "name": "True Move Shop Taweekit Complex Saraburi", "type": "Non Matching", "area": "UPC - Central", "size": "M", "region": "UPC II", "status": "Open", "targetPrebook": 28, "targetAmount": 1860000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100856, "name": "True Shop Uthaithani", "type": "Non Matching", "area": "UPC - Central", "size": "S", "region": "UPC II", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100926, "name": "True Shop Ayudhaya Park", "type": "Matching", "area": "UPC - Central", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 32, "targetAmount": 2096600, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101307, "name": "True Shop Robinson Lopburi", "type": "Matching", "area": "UPC - Central", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 28, "targetAmount": 1860000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101329, "name": "True Shop Big C Nongbua Nakhonsawan", "type": "Non Matching", "area": "UPC - Central", "size": "S", "region": "UPC II", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101351, "name": "True Shop Lotus's Keangkoi Saraburi", "type": "Non Matching", "area": "UPC - Central", "size": "S", "region": "UPC II", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101358, "name": "True shop Central Ayutthaya", "type": "Matching", "area": "UPC - Central", "size": "M", "region": "UPC II", "status": "Open", "targetPrebook": 32, "targetAmount": 2096600, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101626, "name": "Kiosk Lotus's Sena Ayutthaya", "type": "Non Matching", "area": "UPC - Central", "size": "S", "region": "UPC II", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101628, "name": "True Shop Central Nakhonsawan", "type": "Matching", "area": "UPC - Central", "size": "M", "region": "UPC II", "status": "Open", "targetPrebook": 32, "targetAmount": 2096600, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101691, "name": "True Shop Ayutthaya (D)", "type": "Hall", "area": "UPC - Central", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 18, "targetAmount": 1221000, "actualPrebook": 1, "actualAmount": 61900}, {"code": 80100771, "name": "True Shop Lotus's Chiangyuen Mahasarakham", "type": "Non Matching", "area": "UPC - Central Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100778, "name": "True Shop Lotus's Yasothon ", "type": "Non Matching", "area": "UPC - Central Northeast", "size": "L", "region": "UPC I", "status": "Open", "targetPrebook": 27, "targetAmount": 1790100, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100783, "name": "True Shop Lotus's Phonthong Roiet", "type": "Non Matching", "area": "UPC - Central Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100790, "name": "True Shop Lotus's Phibunmangsahan Ubonratchathani", "type": "Non Matching", "area": "UPC - Central Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100797, "name": "True Shop Lotus's Trakan Phuet Phon Ubonratchathani", "type": "Non Matching", "area": "UPC - Central Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100802, "name": "True Shop Lotus's Borabue Mahasarakham", "type": "Non Matching", "area": "UPC - Central Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100832, "name": "True Shop Lotus's Det Udom Ubonratchathani", "type": "Non Matching", "area": "UPC - Central Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100847, "name": "True Shop Mini Senangkhanikhom Amnatcharoen", "type": "Non Matching", "area": "UPC - Central Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100852, "name": "True Shop Khamcha-I Mukdahan", "type": "Non Matching", "area": "UPC - Central Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100861, "name": "True Shop Kasetwisai Roiet", "type": "Non Matching", "area": "UPC - Central Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100864, "name": "True Shop Buntharik Ubonratchathan", "type": "Non Matching", "area": "UPC - Central Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101227, "name": "True Shop Lotus's Ubonratchathani", "type": "Non Matching", "area": "UPC - Central Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101266, "name": "True Shop Central Ubonratchathani", "type": "Matching", "area": "UPC - Central Northeast", "size": "L", "region": "UPC I", "status": "Open", "targetPrebook": 32, "targetAmount": 2096600, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101303, "name": "True Shop Robinson Roi-Et", "type": "Matching", "area": "UPC - Central Northeast", "size": "L", "region": "UPC I", "status": "Open", "targetPrebook": 27, "targetAmount": 1790100, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101309, "name": "True Shop Robinson Mukdahan", "type": "Non Matching", "area": "UPC - Central Northeast", "size": "M", "region": "UPC I", "status": "Open", "targetPrebook": 27, "targetAmount": 1790100, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101663, "name": "True Shop Lotus's Muang Sam Sib (D)", "type": "COCO", "area": "UPC - Central Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101676, "name": "True Shop Big C Phibun Mangsahan (D)", "type": "COCO", "area": "UPC - Central Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101677, "name": "True Shop Lotus's Ubon Ratchathani (D)", "type": "COCO", "area": "UPC - Central Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101680, "name": "True Shop Lotus's Talad Khunhan (D)", "type": "COCO", "area": "UPC - Central Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101681, "name": "True Shop Lotus's Trakan Phuet Phon (D)", "type": "COCO", "area": "UPC - Central Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101684, "name": "True Shop Lotus's Kantharalak (D)", "type": "COCO", "area": "UPC - Central Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101685, "name": "True Shop Lotus's Det Udom (D)", "type": "COCO", "area": "UPC - Central Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101712, "name": "True Shop Central Plaza Ubon Ratchathani (D)", "type": "Hall", "area": "UPC - Central Northeast", "size": "L", "region": "UPC I", "status": "Open", "targetPrebook": 18, "targetAmount": 1221000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100479, "name": "True Shop Terminal 21 Pattaya", "type": "Non Matching", "area": "UPC - East", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 28, "targetAmount": 1860000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100615, "name": "True Shop Central Festival Pattaya Beach", "type": "Matching", "area": "UPC - East", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 32, "targetAmount": 2096600, "actualPrebook": 3, "actualAmount": 201700}, {"code": 80100625, "name": "True Shop Central Plaza Rayong", "type": "Matching", "area": "UPC - East", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 32, "targetAmount": 2096600, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100837, "name": "True Shop Central Chonburi", "type": "Matching", "area": "UPC - East", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 32, "targetAmount": 2096600, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100859, "name": "True Shop Trad", "type": "Non Matching", "area": "UPC - East", "size": "M", "region": "UPC II", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101184, "name": "True Shop Chonburi", "type": "Non Matching", "area": "UPC - East", "size": "M", "region": "UPC II", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101189, "name": "True shop Central Plaza Si Racha", "type": "Matching", "area": "UPC - East", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 32, "targetAmount": 2096600, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101378, "name": "True Shop South Pattaya", "type": "Non Matching", "area": "UPC - East", "size": "M", "region": "UPC II", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101391, "name": "True Shop Central Chanthaburi", "type": "Matching", "area": "UPC - East", "size": "M", "region": "UPC II", "status": "Open", "targetPrebook": 32, "targetAmount": 2096600, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101695, "name": "True Shop Central Rayong (D)", "type": "Hall", "area": "UPC - East", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 18, "targetAmount": 1221000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101700, "name": "True Shop Central Festival Pattaya (D)", "type": "Hall", "area": "UPC - East", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 18, "targetAmount": 1221000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100782, "name": "True Shop Lotus's Thaluang Phichit", "type": "Non Matching", "area": "UPC - Lower North", "size": "M", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100854, "name": "True Shop Mini Lomsak Phetchabun", "type": "Non Matching", "area": "UPC - Lower North", "size": "M", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100865, "name": "True Shop Taphan Hin Phichit", "type": "Non Matching", "area": "UPC - Lower North", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101198, "name": "True Shop Central Phitsanulok", "type": "Matching", "area": "UPC - Lower North", "size": "L", "region": "UPC I", "status": "Open", "targetPrebook": 31, "targetAmount": 2026700, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101306, "name": "True Shop Robinson Mae Sot", "type": "Non Matching", "area": "UPC - Lower North", "size": "M", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101308, "name": "True Shop Robinson Khamphaengphet", "type": "Non Matching", "area": "UPC - Lower North", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101656, "name": "True Shop Lotus's Pitsanulok (D)", "type": "COCO", "area": "UPC - Lower North", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101658, "name": "True Shop Lotus's Lomsak (D)", "type": "COCO", "area": "UPC - Lower North", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101659, "name": "True Shop Robinson Mae Sot (D)", "type": "COCO", "area": "UPC - Lower North", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101665, "name": "True Shop Salokbat Kamphaengphet (D)", "type": "COCO", "area": "UPC - Lower North", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101704, "name": "True Shop Central Plaza Phitsanulok (D)", "type": "Hall", "area": "UPC - Lower North", "size": "L", "region": "UPC I", "status": "Open", "targetPrebook": 18, "targetAmount": 1221000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100487, "name": "True Shop The Mall Nakhonratchasima 3Fl.", "type": "Matching", "area": "UPC - Lower Northeast", "size": "L", "region": "UPC I", "status": "Open", "targetPrebook": 31, "targetAmount": 2026700, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100758, "name": "True Shop Lotus's Buayai Nakhonratchasima", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100764, "name": "True Shop Lotus's Sungkha Surin", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100765, "name": "True Shop Lotus's Prasat Surin", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100769, "name": "True Shop Lotus's Thatum Surin", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100772, "name": "True Shop Lotus's Kaengkhro Chaiyaphum", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100774, "name": "True Shop Lotus's Phimai Nakhonratchasima", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "M", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100776, "name": "True Shop Lotus's JorHor Nakhonratchasima", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100780, "name": "True Shop Lotus's Prakonchai Buriram", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100781, "name": "True Shop Lotus's Lamplaimat Buriram", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100793, "name": "True Shop Lotus's Satuek Buriram", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100794, "name": "True Shop Lotus's Nonthai Nakhonratchasima", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100842, "name": "True Shop Terminal 21 Korat", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "M", "region": "UPC I", "status": "Open", "targetPrebook": 27, "targetAmount": 1790100, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100845, "name": "True Shop Kaset Sombun Chaiyaphum", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100851, "name": "True Shop Nongbunmak Nakhonratchasima", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100860, "name": "True Shop Sikhoraphum Surin", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100862, "name": "True Shop Pakthongchai Nakhonratchasima", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100863, "name": "True Shop Huai Thalaeng Nakhonratchasima", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100867, "name": "True Shop Dan Khun Thot Nakhonratchasima ", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100869, "name": "True Shop Khon Buri Nakhonratchasima", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100870, "name": "True Shop Soeng Sang Nakhonratchasima", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100872, "name": "True Shop Chatturat Chaiyaphum", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101119, "name": "True Shop Central Plaza Nakhonratchasima", "type": "Matching", "area": "UPC - Lower Northeast", "size": "L", "region": "UPC I", "status": "Open", "targetPrebook": 31, "targetAmount": 2026700, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101225, "name": "True Shop Kao Yai Market Village", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "L", "region": "UPC I", "status": "Open", "targetPrebook": 27, "targetAmount": 1790100, "actualPrebook": 1, "actualAmount": 69900}, {"code": 80101265, "name": "True Shop Chumphuang Nakhonratchasima", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101290, "name": "True Shop Big C Korat 2", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "M", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101304, "name": "True Shop Robinson Buriram", "type": "Matching", "area": "UPC - Lower Northeast", "size": "M", "region": "UPC I", "status": "Open", "targetPrebook": 27, "targetAmount": 1790100, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101313, "name": "True Shop Robinson Chaiyaphum", "type": "Matching", "area": "UPC - Lower Northeast", "size": "L", "region": "UPC I", "status": "Open", "targetPrebook": 27, "targetAmount": 1790100, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101331, "name": "True Shop Big C Nongki Buriram", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101345, "name": "True Shop Down Town Nakhonratchasima", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101377, "name": "True Shop Big C Chaiyaphum", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101650, "name": "True Shop Lotus's Pakthongchai (D)", "type": "COCO", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101653, "name": "True Shop Robinson Chaiyaphum (D)", "type": "COCO", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101654, "name": "True Shop Lotus's Bua Yai (D)", "type": "COCO", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101660, "name": "True Shop Lotus's Phimai Nakhon (D)", "type": "COCO", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101666, "name": "True Shop Lotus's Sangkha (D)", "type": "COCO", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101672, "name": "True Shop Big C Korat 2 (D)", "type": "COCO", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101673, "name": "True Shop Lotus's Prasat (D)", "type": "COCO", "area": "UPC - Lower Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101711, "name": "True Shop The Mall Korat (D)", "type": "Hall", "area": "UPC - Lower Northeast", "size": "L", "region": "UPC I", "status": "Open", "targetPrebook": 18, "targetAmount": 1221000, "actualPrebook": 1, "actualAmount": 69900}, {"code": 80100839, "name": "True Shop Central Plaza Nakhonsithammarat", "type": "Matching", "area": "UPC - Lower South", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 31, "targetAmount": 2026700, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100853, "name": "True Shop Mini Mueang Satun", "type": "Non Matching", "area": "UPC - Lower South", "size": "S", "region": "UPC II", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101222, "name": "True Shop Central Festival Hadyai Songkhla", "type": "Matching", "area": "UPC - Lower South", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 31, "targetAmount": 2026700, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101687, "name": "True Shop Ampur Ranot Songkhla (D)", "type": "COCO", "area": "UPC - Lower South", "size": "S", "region": "UPC II", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101692, "name": "True Shop Central Nakorn Sithammarat (D)", "type": "Hall", "area": "UPC - Lower South", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 18, "targetAmount": 1221000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101699, "name": "True Shop Central Festival Hat Yai (D)", "type": "Hall", "area": "UPC - Lower South", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 18, "targetAmount": 1221000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100486, "name": "True Shop Central Festival Chiangmai", "type": "Matching", "area": "UPC - Upper North", "size": "L", "region": "UPC I", "status": "Open", "targetPrebook": 31, "targetAmount": 2026700, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100621, "name": "True Shop Central Chiangrai", "type": "Matching", "area": "UPC - Upper North", "size": "L", "region": "UPC I", "status": "Open", "targetPrebook": 31, "targetAmount": 2026700, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100750, "name": "True Shop Lotus's Fang Chiangmai", "type": "Non Matching", "area": "UPC - Upper North", "size": "M", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100754, "name": "True Shop Lotus's Ruamchok Chiangmai", "type": "Non Matching", "area": "UPC - Upper North", "size": "M", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100792, "name": "True Shop Lotus's Phayao", "type": "Non Matching", "area": "UPC - Upper North", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100798, "name": "True Shop Lotus's Chiangkham Phayao", "type": "Non Matching", "area": "UPC - Upper North", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100804, "name": "True Shop Lotus's Jomthong Chiangmai", "type": "Non Matching", "area": "UPC - Upper North", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100849, "name": "True Shop Mini Mueang Phayao", "type": "Non Matching", "area": "UPC - Upper North", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100858, "name": "True Shop Mini Mae Sai ChiangRai", "type": "Non Matching", "area": "UPC - Upper North", "size": "M", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101013, "name": "True Shop Mini Mueang Maehongson", "type": "Non Matching", "area": "UPC - Upper North", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101067, "name": "True Shop Central Airport Plaza Chiangmai", "type": "Matching", "area": "UPC - Upper North", "size": "L", "region": "UPC I", "status": "Open", "targetPrebook": 31, "targetAmount": 2026700, "actualPrebook": 1, "actualAmount": 61900}, {"code": 80101117, "name": "True Shop Central Lampang", "type": "Matching", "area": "UPC - Upper North", "size": "L", "region": "UPC I", "status": "Open", "targetPrebook": 31, "targetAmount": 2026700, "actualPrebook": 1, "actualAmount": 42900}, {"code": 80101263, "name": "True Shop Maya Chiangmai", "type": "Non Matching", "area": "UPC - Upper North", "size": "M", "region": "UPC I", "status": "Open", "targetPrebook": 31, "targetAmount": 2026700, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101281, "name": "True Shop Big C Chiangmai", "type": "Non Matching", "area": "UPC - Upper North", "size": "M", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101655, "name": "True Shop Lotus's Fang Chiangmai (D)", "type": "COCO", "area": "UPC - Upper North", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101661, "name": "True Shop Lotus's Chom Thong (D)", "type": "COCO", "area": "UPC - Upper North", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101670, "name": "True Shop Lotus's Ruam Choke (D)", "type": "COCO", "area": "UPC - Upper North", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100628, "name": "True Shop Regional Office Khonkaen", "type": "Non Matching", "area": "UPC - Upper Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100727, "name": "True Shop Lotus's Udonthani", "type": "Non Matching", "area": "UPC - Upper Northeast", "size": "L", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100749, "name": "True Shop Lotus's Kalasin", "type": "Non Matching", "area": "UPC - Upper Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100756, "name": "True Shop Lotus's Nongbualamphu", "type": "Non Matching", "area": "UPC - Upper Northeast", "size": "M", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100760, "name": "True Shop Lotus's Nakhonphanom", "type": "Non Matching", "area": "UPC - Upper Northeast", "size": "M", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100770, "name": "True Shop Lotus's Buengkan", "type": "Non Matching", "area": "UPC - Upper Northeast", "size": "M", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100786, "name": "True Shop Lotus's Somdet Kalasin", "type": "Non Matching", "area": "UPC - Upper Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100799, "name": "True Shop Lotus's Phon Khonkaen", "type": "Non Matching", "area": "UPC - Upper Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100801, "name": "True Shop Lotus's Banphue Udonthani", "type": "Non Matching", "area": "UPC - Upper Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100803, "name": "True Shop Lotus's Nongruea  Khonkaen", "type": "Non Matching", "area": "UPC - Upper Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100848, "name": "True Shop Wangsaphung Loei", "type": "Non Matching", "area": "UPC - Upper Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100873, "name": "True Shop Mueang Loei", "type": "Non Matching", "area": "UPC - Upper Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101183, "name": "True Shop Central Khonkaen", "type": "Matching", "area": "UPC - Upper Northeast", "size": "L", "region": "UPC I", "status": "Open", "targetPrebook": 31, "targetAmount": 2026700, "actualPrebook": 1, "actualAmount": 69900}, {"code": 80101196, "name": "True Shop Central Plaza Udonthani", "type": "Matching", "area": "UPC - Upper Northeast", "size": "L", "region": "UPC I", "status": "Open", "targetPrebook": 31, "targetAmount": 2026700, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101289, "name": "True Shop Big C Banphai Khon Kaen", "type": "Non Matching", "area": "UPC - Upper Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101292, "name": "True Shop Big C Bandung Udonthani", "type": "Non Matching", "area": "UPC - Upper Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101293, "name": "True Shop Big C Khonkaen 2", "type": "Non Matching", "area": "UPC - Upper Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101294, "name": "True Shop Big C Loei", "type": "Non Matching", "area": "UPC - Upper Northeast", "size": "L", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101327, "name": "True Shop Big C Phangkhon Sakonnakhon", "type": "Non Matching", "area": "UPC - Upper Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101328, "name": "True Shop Big C Khamtakla Sakonnakhon", "type": "Non Matching", "area": "UPC - Upper Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101346, "name": "True Shop Asawann Phonphisai Nong Khai ", "type": "Non Matching", "area": "UPC - Upper Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101348, "name": "True Shop Asawann Shopping Complex Nongkhai", "type": "Non Matching", "area": "UPC - Upper Northeast", "size": "L", "region": "UPC I", "status": "Open", "targetPrebook": 26, "targetAmount": 1728200, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101648, "name": "True Shop UD Town Udonthani", "type": "Non Matching", "area": "UPC - Upper Northeast", "size": "M", "region": "UPC I", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101651, "name": "True Shop Lotus's Banphue (D)", "type": "COCO", "area": "UPC - Upper Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101652, "name": "True Shop Big C Kranuan (D)", "type": "COCO", "area": "UPC - Upper Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101657, "name": "True Shop Assawan Phonpisai (D)", "type": "COCO", "area": "UPC - Upper Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101664, "name": "True Shop Big C Loei (D)", "type": "COCO", "area": "UPC - Upper Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101668, "name": "True Shop Lotus's Nong Ruea (D)", "type": "COCO", "area": "UPC - Upper Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101671, "name": "True Shop Lotus's Sawandandin (D)", "type": "COCO", "area": "UPC - Upper Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101674, "name": "True Shop Lotus's Nakhon Phanom (D)", "type": "COCO", "area": "UPC - Upper Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101683, "name": "True Shop Big C Nong Khai (D)", "type": "COCO", "area": "UPC - Upper Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101690, "name": "True Shop Big Chiang Nongkhai (D)", "type": "COCO", "area": "UPC - Upper Northeast", "size": "S", "region": "UPC I", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101697, "name": "True Shop Central Udon Thani (D)", "type": "Hall", "area": "UPC - Upper Northeast", "size": "L", "region": "UPC I", "status": "Open", "targetPrebook": 18, "targetAmount": 1221000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101703, "name": "True Shop Central Plaza Khon Kaen (D)", "type": "Hall", "area": "UPC - Upper Northeast", "size": "L", "region": "UPC I", "status": "Open", "targetPrebook": 18, "targetAmount": 1221000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100476, "name": "True Shop Central Festival Phuket", "type": "Matching", "area": "UPC - Upper South", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 32, "targetAmount": 2096600, "actualPrebook": 1, "actualAmount": 61900}, {"code": 80100822, "name": "True Shop Lotus's Ranong", "type": "Non Matching", "area": "UPC - Upper South", "size": "M", "region": "UPC II", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100838, "name": "True Shop Central Festival Samui Suratthani", "type": "Matching", "area": "UPC - Upper South", "size": "M", "region": "UPC II", "status": "Open", "targetPrebook": 31, "targetAmount": 2026700, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101115, "name": "True Shop Central Suratthani", "type": "Matching", "area": "UPC - Upper South", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 31, "targetAmount": 2026700, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101122, "name": "True Shop  Ocean Complex Chumphon", "type": "Non Matching", "area": "UPC - Upper South", "size": "S", "region": "UPC II", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101647, "name": "True Shop Central Krabi", "type": "Matching", "area": "UPC - Upper South", "size": "M", "region": "UPC II", "status": "Open", "targetPrebook": 20, "targetAmount": 1239000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101662, "name": "True Shop Ocean Shopping Mall (D)", "type": "COCO", "area": "UPC - Upper South", "size": "S", "region": "UPC II", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101675, "name": "True Shop Big C Ranong (D)", "type": "COCO", "area": "UPC - Upper South", "size": "S", "region": "UPC II", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101688, "name": "True Shop Lotus's Chaiya (D)", "type": "COCO", "area": "UPC - Upper South", "size": "S", "region": "UPC II", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101701, "name": "True Shop Central Festival Samui (D)", "type": "Hall", "area": "UPC - Upper South", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 11, "targetAmount": 650900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101705, "name": "True Shop Central Plaza Suratthani (D)", "type": "Hall", "area": "UPC - Upper South", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 18, "targetAmount": 1221000, "actualPrebook": 1, "actualAmount": 61900}, {"code": 80101710, "name": "True Shop Phuket (D)", "type": "Hall", "area": "UPC - Upper South", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 18, "targetAmount": 1221000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100627, "name": "True Shop Hua Hin", "type": "Non Matching", "area": "UPC - West", "size": "S", "region": "UPC II", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100721, "name": "True Shop Lotus's Nakhonpathom", "type": "Non Matching", "area": "UPC - West", "size": "S", "region": "UPC II", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100733, "name": "True Shop Lotus's Sampran Nakhonpathom", "type": "Non Matching", "area": "UPC - West", "size": "M", "region": "UPC II", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100784, "name": "True Shop Lotus's U-Thong Suphanburi", "type": "Non Matching", "area": "UPC - West", "size": "S", "region": "UPC II", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100806, "name": "True Shop Lotus's Samchuk Suphanburi", "type": "Non Matching", "area": "UPC - West", "size": "S", "region": "UPC II", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100821, "name": "True Shop Station Lotus's Pranburi Prachuapkhirikhan", "type": "Non Matching", "area": "UPC - West", "size": "S", "region": "UPC II", "status": "Open", "targetPrebook": 0, "targetAmount": 0, "actualPrebook": 0, "actualAmount": 0}, {"code": 80100840, "name": "True Shop Central Plaza Mahachai", "type": "Matching", "area": "UPC - West", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 32, "targetAmount": 2096600, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101214, "name": "True Shop Central Plaza Salaya", "type": "Matching", "area": "UPC - West", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 32, "targetAmount": 2096600, "actualPrebook": 1, "actualAmount": 69900}, {"code": 80101312, "name": "True Shop Robinson Kanchanaburi", "type": "Non Matching", "area": "UPC - West", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 26, "targetAmount": 1728200, "actualPrebook": 1, "actualAmount": 69900}, {"code": 80101629, "name": "True Shop Central Nakhonpathom", "type": "Matching", "area": "UPC - West", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 31, "targetAmount": 2026700, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101669, "name": "True Shop Lotus's Sam Chuk (D)", "type": "COCO", "area": "UPC - West", "size": "S", "region": "UPC II", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101682, "name": "True Shop Lotus's Pran Buri (D)", "type": "COCO", "area": "UPC - West", "size": "S", "region": "UPC II", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101686, "name": "True Shop Lotus's Amphur U-Thong (D)", "type": "COCO", "area": "UPC - West", "size": "S", "region": "UPC II", "status": "Open", "targetPrebook": 1, "targetAmount": 42900, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101693, "name": "True Shop Central Plaza Mahachai (D)", "type": "Hall", "area": "UPC - West", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 18, "targetAmount": 1221000, "actualPrebook": 0, "actualAmount": 0}, {"code": 80101696, "name": "True Shop Central Salaya (D)", "type": "Hall", "area": "UPC - West", "size": "L", "region": "UPC II", "status": "Open", "targetPrebook": 18, "targetAmount": 1221000, "actualPrebook": 1, "actualAmount": 77900}], "bookings": [{"bookingNo": "TUCSZ8LVT769658", "txnDate": "2026-07-22", "txnDateTime": "2026-07-22 21:03:38", "pickupDate": "2026-08-07", "pickupTime": "10:00-13:00", "status": "RESERVE", "model": "Galaxy Z Fold8", "capacity": "256GB", "color": "LAVENDER", "amount": 61900, "qty": 1, "prebookDate": "2026-07-22", "shopCode": 80101070, "shopName": "True Shop Mega Bangna", "type": "Matching", "area": "BMA IV - South East", "size": "L", "region": "BMA", "source": "WEB", "payment": "CARD", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "กรุงเทพมหานคร", "receiptStatus": "In Process", "shopSubType": "True Shop by WW/Matching", "segment": "ลูกค้าทรู ดีแทค รายเดือนปัจจุบัน ที่มีอายุการใช้งาน 12 เดือนขึ้นไป", "package": "แพ็คเกจ1,299", "purchaseType": "device_with_package", "freeGift": 1, "dealPrice": 57200, "discount": 4700, "couponPrice": 2140}, {"bookingNo": "TUCSZ8LVM309844", "txnDate": "2026-07-22", "txnDateTime": "2026-07-22 21:09:48", "pickupDate": "2026-08-08", "pickupTime": "10:00-13:00", "status": "RESERVE", "model": "Galaxy Z Fold8", "capacity": "256GB", "color": "LAVENDER", "amount": 61900, "qty": 1, "prebookDate": "2026-07-22", "shopCode": 80100565, "shopName": "True Shop Central Rama 2", "type": "Matching", "area": "BMA II - South West", "size": "L", "region": "BMA", "source": "WEB", "payment": "CARD", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "กรุงเทพมหานคร", "receiptStatus": "In Process", "shopSubType": "True Shop by WW/Matching", "segment": "ลูกค้าทรู ดีแทค รายเดือนปัจจุบัน ที่มีอายุการใช้งาน 12 เดือนขึ้นไป", "package": "แพ็คเกจ1,499", "purchaseType": "device_with_package", "freeGift": 1, "dealPrice": 56500, "discount": 5400, "couponPrice": 2140}, {"bookingNo": "TUCSZ8CRG948301", "txnDate": "2026-07-22", "txnDateTime": "2026-07-22 21:10:10", "pickupDate": "2026-08-14", "pickupTime": "10:00-13:00", "status": "RESERVE", "model": "Galaxy Z Fold8 Ultra", "capacity": "256GB", "color": "CREAM", "amount": 69900, "qty": 1, "prebookDate": "2026-07-22", "shopCode": 80101711, "shopName": "True Shop The Mall Korat (D)", "type": "Hall", "area": "UPC - Lower Northeast", "size": "L", "region": "UPC I", "source": "instagram", "payment": "TMN", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "บุรีรัมย์", "receiptStatus": "In Process", "shopSubType": "WW Dtac Hall", "segment": "ลูกค้าทรู ดีแทค รายเดือนปัจจุบัน ที่มีอายุการใช้งาน 12 เดือนขึ้นไป", "package": "แพ็คเกจ599", "purchaseType": "device_with_package", "freeGift": 0, "dealPrice": 67900, "discount": 2000, "couponPrice": 2140}, {"bookingNo": "TUCSZ8CRV555548", "txnDate": "2026-07-22", "txnDateTime": "2026-07-22 21:11:46", "pickupDate": "2026-08-08", "pickupTime": "10:00-13:00", "status": "RESERVE", "model": "Galaxy Z Flip8", "capacity": "256GB", "color": "CREAM", "amount": 42900, "qty": 1, "prebookDate": "2026-07-22", "shopCode": 80100484, "shopName": "True Shop The Mall Bangkae 2Fl.", "type": "Matching", "area": "BMA II - South West", "size": "L", "region": "BMA", "source": "line", "payment": "CARD", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "กรุงเทพมหานคร", "receiptStatus": "In Process", "shopSubType": "True Shop by WW/Matching", "segment": "เครื่องเปล่า (ไม่ติดสัญญา)", "package": null, "purchaseType": "device_only", "freeGift": 1, "dealPrice": 42900, "discount": 0, "couponPrice": 2140}, {"bookingNo": "TUCSZ8CRP459661", "txnDate": "2026-07-22", "txnDateTime": "2026-07-22 21:13:10", "pickupDate": "2026-08-08", "pickupTime": "13:00-16:00", "status": "RESERVE", "model": "Galaxy Z Fold8", "capacity": "256GB", "color": "CREAM", "amount": 61900, "qty": 1, "prebookDate": "2026-07-22", "shopCode": 80100925, "shopName": "True Shop Fashion Island", "type": "Matching", "area": "BMA III - North East", "size": "L", "region": "BMA", "source": "instagram", "payment": "PROMPTPAY", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "กรุงเทพมหานคร", "receiptStatus": "In Process", "shopSubType": "True Shop by WW/Matching", "segment": "ลูกค้าทรู ดีแทค รายเดือนปัจจุบัน ที่มีอายุการใช้งาน 12 เดือนขึ้นไป", "package": "แพ็คเกจ699", "purchaseType": "device_with_package", "freeGift": 1, "dealPrice": 59400, "discount": 2500, "couponPrice": 2140}, {"bookingNo": "TUCSZ8CRI411022", "txnDate": "2026-07-22", "txnDateTime": "2026-07-22 21:22:57", "pickupDate": "2026-08-07", "pickupTime": "10:00-13:00", "status": "RESERVE", "model": "Galaxy Z Fold8 Ultra", "capacity": "256GB", "color": "CREAM", "amount": 69900, "qty": 1, "prebookDate": "2026-07-22", "shopCode": 80101312, "shopName": "True Shop Robinson Kanchanaburi", "type": "Non Matching", "area": "UPC - West", "size": "L", "region": "UPC II", "source": "facebook", "payment": "PROMPTPAY", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "นครศรีธรรมราช", "receiptStatus": "In Process", "shopSubType": "True Shop by WW", "segment": "ลูกค้าทรู ดีแทค รายเดือนปัจจุบัน ที่มีอายุการใช้งาน 12 เดือนขึ้นไป", "package": "แพ็คเกจ1,499", "purchaseType": "device_with_package", "freeGift": 1, "dealPrice": 64500, "discount": 5400, "couponPrice": 2140}, {"bookingNo": "TUCSZ8PKE638519", "txnDate": "2026-07-22", "txnDateTime": "2026-07-22 21:26:08", "pickupDate": "2026-08-07", "pickupTime": "10:00-13:00", "status": "RESERVE", "model": "Galaxy Z Flip8", "capacity": "256GB", "color": "PINK", "amount": 42900, "qty": 1, "prebookDate": "2026-07-22", "shopCode": 80100928, "shopName": "True Shop Seacon Bangkae", "type": "Matching", "area": "BMA II - South West", "size": "L", "region": "BMA", "source": "facebook", "payment": "CARD", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "กรุงเทพมหานคร", "receiptStatus": "In Process", "shopSubType": "True Shop by WW/Matching", "segment": "ลูกค้าทรู ดีแทค รายเดือนปัจจุบัน ที่มีอายุการใช้งาน 12 เดือนขึ้นไป", "package": "แพ็คเกจ599", "purchaseType": "device_with_package", "freeGift": 1, "dealPrice": 40900, "discount": 2000, "couponPrice": 2140}, {"bookingNo": "TUCSZ8CRV358649", "txnDate": "2026-07-22", "txnDateTime": "2026-07-22 21:28:20", "pickupDate": "2026-08-07", "pickupTime": "10:00-13:00", "status": "RESERVE", "model": "Galaxy Z Fold8", "capacity": "256GB", "color": "CREAM", "amount": 61900, "qty": 1, "prebookDate": "2026-07-22", "shopCode": 80101691, "shopName": "True Shop Ayutthaya (D)", "type": "Hall", "area": "UPC - Central", "size": "L", "region": "UPC II", "source": "WEB", "payment": "CARD", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "ปทุมธานี", "receiptStatus": "In Process", "shopSubType": "WW Dtac Hall", "segment": "ลูกค้าทรู ดีแทค รายเดือนปัจจุบัน ที่มีอายุการใช้งาน 12 เดือนขึ้นไป", "package": "แพ็คเกจ1,499", "purchaseType": "device_with_package", "freeGift": 1, "dealPrice": 56500, "discount": 5400, "couponPrice": 2140}, {"bookingNo": "TUCSZ8PKQ573981", "txnDate": "2026-07-22", "txnDateTime": "2026-07-22 21:28:43", "pickupDate": "2026-08-14", "pickupTime": "16:00-20:00", "status": "RESERVE", "model": "Galaxy Z Flip8", "capacity": "512GB", "color": "PINK", "amount": 50900, "qty": 1, "prebookDate": "2026-07-22", "shopCode": 80100622, "shopName": "True Shop Central Rama 9 4Fl.", "type": "Matching", "area": "BMA V - Central", "size": "L", "region": "BMA", "source": "true.th", "payment": "PROMPTPAY", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "กรุงเทพมหานคร", "receiptStatus": "In Process", "shopSubType": "True Shop by WW/Matching", "segment": "ลูกค้าทรู ดีแทค รายเดือนปัจจุบัน ที่มีอายุการใช้งาน 12 เดือนขึ้นไป", "package": "แพ็คเกจ1,299", "purchaseType": "device_with_package", "freeGift": 0, "dealPrice": 46200, "discount": 4700, "couponPrice": 2140}, {"bookingNo": "TUCSZ8GPJ828164", "txnDate": "2026-07-22", "txnDateTime": "2026-07-22 21:30:15", "pickupDate": "2026-08-07", "pickupTime": "10:00-13:00", "status": "RESERVE", "model": "Galaxy Z Fold8", "capacity": "512GB", "color": "GRAPHITE", "amount": 69900, "qty": 1, "prebookDate": "2026-07-22", "shopCode": 80100484, "shopName": "True Shop The Mall Bangkae 2Fl.", "type": "Matching", "area": "BMA II - South West", "size": "L", "region": "BMA", "source": "WEB", "payment": "PROMPTPAY", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "สมุทรสาคร", "receiptStatus": "In Process", "shopSubType": "True Shop by WW/Matching", "segment": "เครื่องเปล่า (ไม่ติดสัญญา)", "package": null, "purchaseType": "device_only", "freeGift": 1, "dealPrice": 65900, "discount": 4000, "couponPrice": 2140}, {"bookingNo": "TUCSZ8LVQ712906", "txnDate": "2026-07-22", "txnDateTime": "2026-07-22 21:45:16", "pickupDate": "2026-08-07", "pickupTime": "10:00-13:00", "status": "RESERVE", "model": "Galaxy Z Fold8", "capacity": "256GB", "color": "LAVENDER", "amount": 61900, "qty": 1, "prebookDate": "2026-07-22", "shopCode": 80101340, "shopName": "True Shop Future Park Rangsit", "type": "Matching", "area": "BMA III - North East", "size": "L", "region": "BMA", "source": "WEB", "payment": "PROMPTPAY", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "ปทุมธานี", "receiptStatus": "In Process", "shopSubType": "True Shop by WW/Matching", "segment": "เครื่องเปล่า (ไม่ติดสัญญา)", "package": null, "purchaseType": "device_only", "freeGift": 1, "dealPrice": 61900, "discount": 0, "couponPrice": 2140}, {"bookingNo": "TUCSZ8LVW356420", "txnDate": "2026-07-22", "txnDateTime": "2026-07-22 21:45:57", "pickupDate": "2026-08-08", "pickupTime": "13:00-16:00", "status": "RESERVE", "model": "Galaxy Z Fold8", "capacity": "256GB", "color": "LAVENDER", "amount": 61900, "qty": 1, "prebookDate": "2026-07-22", "shopCode": 80101186, "shopName": "True Shop Central Festival East Ville", "type": "Matching", "area": "BMA V - Central", "size": "L", "region": "BMA", "source": "WEB", "payment": "CARD", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "นนทบุรี", "receiptStatus": "In Process", "shopSubType": "True Shop by WW/Matching", "segment": "เครื่องเปล่า (ไม่ติดสัญญา)", "package": null, "purchaseType": "device_only", "freeGift": 1, "dealPrice": 61900, "discount": 0, "couponPrice": 2140}, {"bookingNo": "TUCSZ8PKX343714", "txnDate": "2026-07-22", "txnDateTime": "2026-07-22 21:53:11", "pickupDate": "2026-08-07", "pickupTime": "10:00-13:00", "status": "RESERVE", "model": "Galaxy Z Flip8", "capacity": "256GB", "color": "PINK", "amount": 42900, "qty": 1, "prebookDate": "2026-07-22", "shopCode": 80101117, "shopName": "True Shop Central Lampang", "type": "Matching", "area": "UPC - Upper North", "size": "L", "region": "UPC I", "source": "line", "payment": "CARD", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "ลำปาง", "receiptStatus": "In Process", "shopSubType": "True Shop by WW/Matching", "segment": "ลูกค้าทรู ดีแทค รายเดือนปัจจุบัน ที่มีอายุการใช้งาน 12 เดือนขึ้นไป", "package": "แพ็คเกจ699", "purchaseType": "device_with_package", "freeGift": 1, "dealPrice": 40400, "discount": 2500, "couponPrice": 2140}, {"bookingNo": "TUCSZ8PKU576178", "txnDate": "2026-07-22", "txnDateTime": "2026-07-22 22:00:22", "pickupDate": "2026-08-07", "pickupTime": "10:00-13:00", "status": "RESERVE", "model": "Galaxy Z Flip8", "capacity": "256GB", "color": "PINK", "amount": 42900, "qty": 1, "prebookDate": "2026-07-22", "shopCode": 80100477, "shopName": "True Shop Central Ladprao", "type": "Matching", "area": "BMA I - North West", "size": "L", "region": "BMA", "source": "instagram", "payment": "CARD", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "กรุงเทพมหานคร", "receiptStatus": "In Process", "shopSubType": "True Shop by WW/Matching", "segment": "ลูกค้าทรู ดีแทค รายเดือนปัจจุบัน ที่มีอายุการใช้งาน 12 เดือนขึ้นไป", "package": "แพ็คเกจ1,499", "purchaseType": "device_with_package", "freeGift": 1, "dealPrice": 37500, "discount": 5400, "couponPrice": 2140}, {"bookingNo": "TUCSZ8CRS995925", "txnDate": "2026-07-22", "txnDateTime": "2026-07-22 22:10:46", "pickupDate": "2026-08-07", "pickupTime": "13:00-16:00", "status": "RESERVE", "model": "Galaxy Z Fold8", "capacity": "512GB", "color": "CREAM", "amount": 69900, "qty": 1, "prebookDate": "2026-07-22", "shopCode": 80101185, "shopName": "True Shop Central West Gate", "type": "Matching", "area": "BMA I - North West", "size": "L", "region": "BMA", "source": "WEB", "payment": "CARD", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "นนทบุรี", "receiptStatus": "In Process", "shopSubType": "True Shop by WW/Matching", "segment": "เครื่องเปล่า (ไม่ติดสัญญา)", "package": null, "purchaseType": "device_only", "freeGift": 1, "dealPrice": 65900, "discount": 4000, "couponPrice": 2140}, {"bookingNo": "TUCSZ8CRQ889637", "txnDate": "2026-07-22", "txnDateTime": "2026-07-22 22:17:23", "pickupDate": "2026-08-14", "pickupTime": "16:00-20:00", "status": "RESERVE", "model": "Galaxy Z Fold8", "capacity": "256GB", "color": "CREAM", "amount": 61900, "qty": 1, "prebookDate": "2026-07-22", "shopCode": 80101706, "shopName": "True Shop Fashion Island (D)", "type": "Hall", "area": "BMA III - North East", "size": "L", "region": "BMA", "source": "WEB", "payment": "CARD", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "กรุงเทพมหานคร", "receiptStatus": "In Process", "shopSubType": "WW Dtac Hall", "segment": "ลูกค้าทรู ดีแทค รายเดือนปัจจุบัน ที่มีอายุการใช้งาน 12 เดือนขึ้นไป", "package": "แพ็คเกจ1,499", "purchaseType": "device_with_package", "freeGift": 0, "dealPrice": 56500, "discount": 5400, "couponPrice": 2140}, {"bookingNo": "TUCSZ8GPY403871", "txnDate": "2026-07-22", "txnDateTime": "2026-07-22 22:36:08", "pickupDate": "2026-08-07", "pickupTime": "10:00-13:00", "status": "RESERVE", "model": "Galaxy Z Fold8 Ultra", "capacity": "256GB", "color": "GRAPHITE", "amount": 69900, "qty": 1, "prebookDate": "2026-07-22", "shopCode": 80100565, "shopName": "True Shop Central Rama 2", "type": "Matching", "area": "BMA II - South West", "size": "L", "region": "BMA", "source": "facebook", "payment": "PROMPTPAY", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "กรุงเทพมหานคร", "receiptStatus": "In Process", "shopSubType": "True Shop by WW/Matching", "segment": "ลูกค้าทรู ดีแทค รายเดือนปัจจุบัน ที่มีอายุการใช้งาน 12 เดือนขึ้นไป", "package": "แพ็คเกจ899", "purchaseType": "device_with_package", "freeGift": 1, "dealPrice": 66700, "discount": 3200, "couponPrice": 2140}, {"bookingNo": "TUCSZ8GPW139636", "txnDate": "2026-07-22", "txnDateTime": "2026-07-22 23:04:04", "pickupDate": "2026-08-08", "pickupTime": "10:00-13:00", "status": "RESERVE", "model": "Galaxy Z Fold8", "capacity": "512GB", "color": "GRAPHITE", "amount": 69900, "qty": 1, "prebookDate": "2026-07-22", "shopCode": 80100565, "shopName": "True Shop Central Rama 2", "type": "Matching", "area": "BMA II - South West", "size": "L", "region": "BMA", "source": "WEB", "payment": "CARD", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "กรุงเทพมหานคร", "receiptStatus": "In Process", "shopSubType": "True Shop by WW/Matching", "segment": "ลูกค้าทรู ดีแทค รายเดือนปัจจุบัน ที่มีอายุการใช้งาน 12 เดือนขึ้นไป", "package": "แพ็คเกจ699", "purchaseType": "device_with_package", "freeGift": 1, "dealPrice": 67400, "discount": 2500, "couponPrice": 2140}, {"bookingNo": "TUCSZ8LVR454436", "txnDate": "2026-07-22", "txnDateTime": "2026-07-22 23:52:40", "pickupDate": "2026-08-08", "pickupTime": "10:00-13:00", "status": "RESERVE", "model": "Galaxy Z Fold8", "capacity": "256GB", "color": "LAVENDER", "amount": 61900, "qty": 1, "prebookDate": "2026-07-22", "shopCode": 80100615, "shopName": "True Shop Central Festival Pattaya Beach", "type": "Matching", "area": "UPC - East", "size": "L", "region": "UPC II", "source": "WEB", "payment": "CARD", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "ชลบุรี", "receiptStatus": "In Process", "shopSubType": "True Shop by WW/Matching", "segment": "เครื่องเปล่า (ไม่ติดสัญญา)", "package": null, "purchaseType": "device_only", "freeGift": 1, "dealPrice": 61900, "discount": 0, "couponPrice": 2140}, {"bookingNo": "TUCSZ8LVM436440", "txnDate": "2026-07-23", "txnDateTime": "2026-07-23 00:02:49", "pickupDate": "2026-08-07", "pickupTime": "10:00-13:00", "status": "RESERVE", "model": "Galaxy Z Fold8", "capacity": "512GB", "color": "LAVENDER", "amount": 69900, "qty": 1, "prebookDate": "2026-07-23", "shopCode": 80101214, "shopName": "True Shop Central Plaza Salaya", "type": "Matching", "area": "UPC - West", "size": "L", "region": "UPC II", "source": "WEB", "payment": "PROMPTPAY", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "นครปฐม", "receiptStatus": "In Process", "shopSubType": "True Shop by WW/Matching", "segment": "ลูกค้าทรู ดีแทค รายเดือนปัจจุบัน ที่มีอายุการใช้งาน 12 เดือนขึ้นไป", "package": "แพ็คเกจ899", "purchaseType": "device_with_package", "freeGift": 1, "dealPrice": 66700, "discount": 3200, "couponPrice": 2140}, {"bookingNo": "TUCSZ8GPT554370", "txnDate": "2026-07-23", "txnDateTime": "2026-07-23 00:16:38", "pickupDate": "2026-08-09", "pickupTime": "16:00-20:00", "status": "RESERVE", "model": "Galaxy Z Fold8 Ultra", "capacity": "256GB", "color": "GRAPHITE", "amount": 69900, "qty": 1, "prebookDate": "2026-07-23", "shopCode": 80100615, "shopName": "True Shop Central Festival Pattaya Beach", "type": "Matching", "area": "UPC - East", "size": "L", "region": "UPC II", "source": "WEB", "payment": "PROMPTPAY", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "ชลบุรี", "receiptStatus": "In Process", "shopSubType": "True Shop by WW/Matching", "segment": "เครื่องเปล่า (ไม่ติดสัญญา)", "package": null, "purchaseType": "device_only", "freeGift": 1, "dealPrice": 69900, "discount": 0, "couponPrice": 2140}, {"bookingNo": "TUCSZ8VSI711643", "txnDate": "2026-07-23", "txnDateTime": "2026-07-23 00:20:54", "pickupDate": "2026-08-07", "pickupTime": "10:00-13:00", "status": "RESERVE", "model": "Galaxy Z Fold8 Ultra", "capacity": "256GB", "color": "VIOLET SHADOW", "amount": 69900, "qty": 1, "prebookDate": "2026-07-23", "shopCode": 80101183, "shopName": "True Shop Central Khonkaen", "type": "Matching", "area": "UPC - Upper Northeast", "size": "L", "region": "UPC I", "source": "WEB", "payment": "PROMPTPAY", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "ร้อยเอ็ด", "receiptStatus": "In Process", "shopSubType": "True Shop by WW/Matching", "segment": "ลูกค้าทรู ดีแทค รายเดือนปัจจุบัน ที่มีอายุการใช้งาน 12 เดือนขึ้นไป", "package": "แพ็คเกจ1,299", "purchaseType": "device_with_package", "freeGift": 1, "dealPrice": 65200, "discount": 4700, "couponPrice": 2140}, {"bookingNo": "TUCSZ8CRL142857", "txnDate": "2026-07-23", "txnDateTime": "2026-07-23 00:26:20", "pickupDate": "2026-08-08", "pickupTime": "10:00-13:00", "status": "RESERVE", "model": "Galaxy Z Fold8", "capacity": "512GB", "color": "CREAM", "amount": 69900, "qty": 1, "prebookDate": "2026-07-23", "shopCode": 80100615, "shopName": "True Shop Central Festival Pattaya Beach", "type": "Matching", "area": "UPC - East", "size": "L", "region": "UPC II", "source": "WEB", "payment": "CARD", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "ชลบุรี", "receiptStatus": "In Process", "shopSubType": "True Shop by WW/Matching", "segment": "ลูกค้าทรู ดีแทค รายเดือนปัจจุบัน ที่มีอายุการใช้งาน 12 เดือนขึ้นไป", "package": "แพ็คเกจ899", "purchaseType": "device_with_package", "freeGift": 1, "dealPrice": 66700, "discount": 3200, "couponPrice": 2140}, {"bookingNo": "TUCSZ8CRO121982", "txnDate": "2026-07-23", "txnDateTime": "2026-07-23 06:03:23", "pickupDate": "2026-08-14", "pickupTime": "10:00-13:00", "status": "RESERVE", "model": "Galaxy Z Fold8", "capacity": "512GB", "color": "CREAM", "amount": 69900, "qty": 1, "prebookDate": "2026-07-23", "shopCode": 80100836, "shopName": "True Shop Central World 4Fl.", "type": "Matching", "area": "BMA V - Central", "size": "L", "region": "BMA", "source": "WEB", "payment": "PROMPTPAY", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "นนทบุรี", "receiptStatus": "In Process", "shopSubType": "True Shop by WW/Matching", "segment": "ลูกค้าเปิดเบอร์ใหม่ เปลี่ยนจากเติมเงินเป็นรายเดือน ย้ายค่ายเบอร์เดิม ลูกค้าปัจจุบันอายุการใช้งาน 90 วัน", "package": "แพ็คเกจ1,499", "purchaseType": "device_with_package", "freeGift": 0, "dealPrice": 64500, "discount": 5400, "couponPrice": 2140}, {"bookingNo": "TUCSZ8GPO279163", "txnDate": "2026-07-23", "txnDateTime": "2026-07-23 06:07:17", "pickupDate": "2026-08-16", "pickupTime": "13:00-16:00", "status": "RESERVE", "model": "Galaxy Z Fold8", "capacity": "256GB", "color": "GRAPHITE", "amount": 61900, "qty": 1, "prebookDate": "2026-07-23", "shopCode": 80100476, "shopName": "True Shop Central Festival Phuket", "type": "Matching", "area": "UPC - Upper South", "size": "L", "region": "UPC II", "source": "facebook", "payment": "PROMPTPAY", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "พังงา", "receiptStatus": "In Process", "shopSubType": "True Shop by WW/Matching", "segment": "ลูกค้าทรู ดีแทค รายเดือนปัจจุบัน ที่มีอายุการใช้งาน 12 เดือนขึ้นไป", "package": "แพ็คเกจ899", "purchaseType": "device_with_package", "freeGift": 0, "dealPrice": 58700, "discount": 3200, "couponPrice": 2140}, {"bookingNo": "TUCSZ8GPP648354", "txnDate": "2026-07-23", "txnDateTime": "2026-07-23 07:50:16", "pickupDate": "2026-08-15", "pickupTime": "10:00-13:00", "status": "RESERVE", "model": "Galaxy Z Fold8 Ultra", "capacity": "512GB", "color": "GRAPHITE", "amount": 77900, "qty": 1, "prebookDate": "2026-07-23", "shopCode": 80101696, "shopName": "True Shop Central Salaya (D)", "type": "Hall", "area": "UPC - West", "size": "L", "region": "UPC II", "source": "facebook", "payment": "PROMPTPAY", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "นครปฐม", "receiptStatus": "In Process", "shopSubType": "WW Dtac Hall", "segment": "เครื่องเปล่า (ไม่ติดสัญญา)", "package": null, "purchaseType": "device_only", "freeGift": 0, "dealPrice": 73900, "discount": 4000, "couponPrice": 2140}, {"bookingNo": "TUCSZ8VST611474", "txnDate": "2026-07-23", "txnDateTime": "2026-07-23 08:02:20", "pickupDate": "2026-08-08", "pickupTime": "13:00-16:00", "status": "RESERVE", "model": "Galaxy Z Fold8 Ultra", "capacity": "256GB", "color": "VIOLET SHADOW", "amount": 69900, "qty": 1, "prebookDate": "2026-07-23", "shopCode": 80100480, "shopName": "True Shop The Mall Ngamwongwan 3Fl.", "type": "Matching", "area": "BMA I - North West", "size": "L", "region": "BMA", "source": "trueid-app", "payment": "TMN", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "นนทบุรี", "receiptStatus": "In Process", "shopSubType": "True Shop by WW/Matching", "segment": "ลูกค้าทรู ดีแทค รายเดือนปัจจุบัน ที่มีอายุการใช้งาน 12 เดือนขึ้นไป", "package": "แพ็คเกจ899", "purchaseType": "device_with_package", "freeGift": 1, "dealPrice": 66700, "discount": 3200, "couponPrice": 2140}, {"bookingNo": "TUCSZ8LVH141742", "txnDate": "2026-07-23", "txnDateTime": "2026-07-23 08:07:53", "pickupDate": "2026-08-14", "pickupTime": "16:00-20:00", "status": "RESERVE", "model": "Galaxy Z Fold8", "capacity": "512GB", "color": "LAVENDER", "amount": 69900, "qty": 1, "prebookDate": "2026-07-23", "shopCode": 80101225, "shopName": "True Shop Kao Yai Market Village", "type": "Non Matching", "area": "UPC - Lower Northeast", "size": "L", "region": "UPC I", "source": "WEB", "payment": "PROMPTPAY", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "นครราชสีมา", "receiptStatus": "In Process", "shopSubType": "True Shop by WW", "segment": "ลูกค้าเปิดเบอร์ใหม่ เปลี่ยนจากเติมเงินเป็นรายเดือน ย้ายค่ายเบอร์เดิม ลูกค้าปัจจุบันอายุการใช้งาน 90 วัน", "package": "แพ็คเกจ1,499", "purchaseType": "device_with_package", "freeGift": 0, "dealPrice": 64500, "discount": 5400, "couponPrice": 2140}, {"bookingNo": "TUCSZ8GPB558646", "txnDate": "2026-07-23", "txnDateTime": "2026-07-23 08:30:47", "pickupDate": "2026-08-07", "pickupTime": "10:00-13:00", "status": "RESERVE", "model": "Galaxy Z Fold8", "capacity": "256GB", "color": "GRAPHITE", "amount": 61900, "qty": 1, "prebookDate": "2026-07-23", "shopCode": 80101067, "shopName": "True Shop Central Airport Plaza Chiangmai", "type": "Matching", "area": "UPC - Upper North", "size": "L", "region": "UPC I", "source": "instagram", "payment": "TMN", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "เชียงใหม่", "receiptStatus": "In Process", "shopSubType": "True Shop by WW/Matching", "segment": "ลูกค้าทรู ดีแทค รายเดือนปัจจุบัน ที่มีอายุการใช้งาน 12 เดือนขึ้นไป", "package": "แพ็คเกจ1,499", "purchaseType": "device_with_package", "freeGift": 1, "dealPrice": 56500, "discount": 5400, "couponPrice": 2140}, {"bookingNo": "TUCSZ8GPJ352366", "txnDate": "2026-07-23", "txnDateTime": "2026-07-23 10:23:10", "pickupDate": "2026-08-16", "pickupTime": "13:00-16:00", "status": "RESERVE", "model": "Galaxy Z Fold8", "capacity": "256GB", "color": "GRAPHITE", "amount": 61900, "qty": 1, "prebookDate": "2026-07-23", "shopCode": 80101705, "shopName": "True Shop Central Plaza Suratthani (D)", "type": "Hall", "area": "UPC - Upper South", "size": "L", "region": "UPC II", "source": "WEB", "payment": "CARD", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "สุราษฎร์ธานี", "receiptStatus": "Pending", "shopSubType": "WW Dtac Hall", "segment": "ลูกค้าทรู ดีแทค รายเดือนปัจจุบัน ที่มีอายุการใช้งาน 12 เดือนขึ้นไป", "package": "แพ็คเกจ699", "purchaseType": "device_with_package", "freeGift": 0, "dealPrice": 59400, "discount": 2500, "couponPrice": 2140}, {"bookingNo": "TUCSZ8CRP221131", "txnDate": "2026-07-23", "txnDateTime": "2026-07-23 10:33:47", "pickupDate": "2026-08-14", "pickupTime": "16:00-20:00", "status": "RESERVE", "model": "Galaxy Z Fold8", "capacity": "512GB", "color": "CREAM", "amount": 69900, "qty": 1, "prebookDate": "2026-07-23", "shopCode": 80101182, "shopName": "True Shop Central Chaengwattana", "type": "Matching", "area": "BMA I - North West", "size": "L", "region": "BMA", "source": "WEB", "payment": "CARD", "depositStatus": "payment success", "pickUpStatus": "Pending (รอลูกค้ามารับเครื่อง)", "province": "กรุงเทพมหานคร", "receiptStatus": "Pending", "shopSubType": "True Shop by WW/Matching", "segment": "ลูกค้าทรู ดีแทค รายเดือนปัจจุบัน ที่มีอายุการใช้งาน 12 เดือนขึ้นไป", "package": "แพ็คเกจ599", "purchaseType": "device_with_package", "freeGift": 0, "dealPrice": 67900, "discount": 2000, "couponPrice": 2140}]};
+</script>
+<script>
+(function(){
+  'use strict';
+
+  // ---------- constants / ordering ----------
+  const REGION_ORDER = ['BMA','UPC I','UPC II'];
+  const AREA_ORDER = ['BMA I - North West','BMA II - South West','BMA III - North East','BMA IV - South East','BMA V - Central',
+    'UPC - Central Northeast','UPC - Lower North','UPC - Lower Northeast','UPC - Upper North','UPC - Upper Northeast',
+    'UPC - Central','UPC - East','UPC - Lower South','UPC - Upper South','UPC - West'];
+  const TYPE_ORDER = ['Matching','Non Matching','COCO','Hall'];
+  const SIZE_ORDER = ['L','M','S'];
+  const STATUS_ORDER = ['Open','Closed'];
+  const MODEL_ORDER = ['Galaxy Z Flip8','Galaxy Z Fold8','Galaxy Z Fold8 Ultra'];
+  const MODEL_COLOR = {'Galaxy Z Flip8':'var(--series-1)','Galaxy Z Fold8':'var(--series-2)','Galaxy Z Fold8 Ultra':'var(--series-3)'};
+  const COLOR_SWATCH = {
+    'CREAM':'var(--series-4)', 'GRAPHITE':'var(--series-7)', 'LAVENDER':'var(--series-5)',
+    'PINK':'var(--series-5)', 'VIOLET SHADOW':'var(--series-7)', 'TITANIUM GRAY':'var(--text-muted)'
+  };
+
+  function orderList(list, order){
+    return list.slice().sort((a,b)=>{
+      const ia = order.indexOf(a), ib = order.indexOf(b);
+      if(ia===-1 && ib===-1) return a.localeCompare(b);
+      if(ia===-1) return 1;
+      if(ib===-1) return -1;
+      return ia-ib;
+    });
+  }
+
+  const fmtInt = n => Math.round(n).toLocaleString('en-US');
+  const fmtMoney = n => '฿' + Math.round(n).toLocaleString('en-US');
+  const fmtMoneyCompact = n => {
+    n = Math.round(n);
+    if (Math.abs(n) >= 1000000) return '฿' + (n/1000000).toFixed(2) + 'M';
+    if (Math.abs(n) >= 1000) return '฿' + (n/1000).toFixed(1) + 'K';
+    return '฿' + n.toLocaleString('en-US');
+  };
+  const fmtPct = n => (n*100).toFixed(1) + '%';
+
+  function statusOf(pct){
+    if (pct >= 0.8) return 'good';
+    if (pct >= 0.4) return 'warning';
+    return 'critical';
+  }
+  const STATUS_VAR = { good: 'var(--status-good)', warning: 'var(--status-warning)', serious: 'var(--status-serious)', critical: 'var(--status-critical)' };
+
+  // ---------- filter state ----------
+  const state = { region: new Set(), area: new Set(), type: new Set(), size: new Set(), status: new Set(), shopName: new Set(), model: new Set(), search: '' };
+
+  function shopMatchesExcept(shop, exceptDim){
+    if (exceptDim!=='region' && state.region.size && !state.region.has(shop.region)) return false;
+    if (exceptDim!=='area' && state.area.size && !state.area.has(shop.area)) return false;
+    if (exceptDim!=='type' && state.type.size && !state.type.has(shop.type)) return false;
+    if (exceptDim!=='size' && state.size.size && !state.size.has(shop.size)) return false;
+    if (exceptDim!=='status' && state.status.size && !state.status.has(shop.status)) return false;
+    if (exceptDim!=='shopName' && state.shopName.size && !state.shopName.has(shop.name)) return false;
+    if (state.search){
+      const q = state.search.toLowerCase();
+      if (!(String(shop.name).toLowerCase().includes(q) || String(shop.code).includes(q))) return false;
+    }
+    return true;
+  }
+  function shopMatches(shop){ return shopMatchesExcept(shop, null); }
+
+  function bookingMatchesExcept(b, exceptDim){
+    if (exceptDim!=='region' && state.region.size && !state.region.has(b.region)) return false;
+    if (exceptDim!=='area' && state.area.size && !state.area.has(b.area)) return false;
+    if (exceptDim!=='type' && state.type.size && !state.type.has(b.type)) return false;
+    if (exceptDim!=='size' && state.size.size && !state.size.has(b.size)) return false;
+    if (exceptDim!=='shopName' && state.shopName.size && !state.shopName.has(b.shopName)) return false;
+    if (exceptDim!=='model' && state.model.size && !state.model.has(b.model)) return false;
+    if (state.search){
+      const q = state.search.toLowerCase();
+      if (!(String(b.shopName).toLowerCase().includes(q) || String(b.shopCode).includes(q))) return false;
+    }
+    return true;
+  }
+  function bookingMatches(b){ return bookingMatchesExcept(b, null); }
+
+  function filteredShops(){ return DATA.shops.filter(shopMatches); }
+  function filteredBookings(){ return DATA.bookings.filter(bookingMatches); }
+
+  // ---------- multi-select filter dropdown ----------
+  const DIM_CONFIG = {
+    region: { label: 'ภาค (Region)', order: REGION_ORDER, getter: s=>s.region, kind:'shop' },
+    area:   { label: 'พื้นที่ (Area)', order: AREA_ORDER, getter: s=>s.area, kind:'shop' },
+    type:   { label: 'รูปแบบร้าน', order: TYPE_ORDER, getter: s=>s.type, kind:'shop' },
+    size:   { label: 'ขนาดร้าน', order: SIZE_ORDER, getter: s=>s.size, kind:'shop' },
+    status: { label: 'สถานะร้าน', order: STATUS_ORDER, getter: s=>s.status, kind:'shop' },
+    shopName: { label: 'ชื่อสาขา (Shop Name)', order: [], getter: s=>s.name, kind:'shop', searchable:true },
+    model:  { label: 'รุ่น (Model)', order: MODEL_ORDER, getter: b=>b.model, kind:'booking' },
+  };
+
+  function buildOptionCounts(dim){
+    const cfg = DIM_CONFIG[dim];
+    const counts = {};
+    if (cfg.kind === 'shop'){
+      DATA.shops.forEach(s=>{
+        if (!shopMatchesExcept(s, dim)) return;
+        const v = cfg.getter(s);
+        counts[v] = (counts[v]||0)+1;
+      });
+    } else {
+      DATA.bookings.forEach(b=>{
+        if (!bookingMatchesExcept(b, dim)) return;
+        const v = cfg.getter(b);
+        counts[v] = (counts[v]||0)+1;
+      });
+    }
+    return counts;
+  }
+
+  function allValuesFor(dim){
+    const cfg = DIM_CONFIG[dim];
+    const set = new Set();
+    if (cfg.kind === 'shop') DATA.shops.forEach(s=>set.add(cfg.getter(s)));
+    else DATA.bookings.forEach(b=>set.add(cfg.getter(b)));
+    return orderList(Array.from(set), cfg.order);
+  }
+
+  function renderMsButton(dim){
+    const btn = document.querySelector('.msbtn[data-target="'+dim+'"]');
+    const cfg = DIM_CONFIG[dim];
+    const sel = state[dim];
+    const labelSpan = btn.querySelector('span');
+    if (sel.size === 0){
+      labelSpan.textContent = cfg.label;
+      let chip = btn.querySelector('.count-chip'); if (chip) chip.remove();
+    } else {
+      labelSpan.textContent = cfg.label;
+      let chip = btn.querySelector('.count-chip');
+      if (!chip){ chip = document.createElement('span'); chip.className='count-chip'; btn.insertBefore(chip, btn.querySelector('.caret')); }
+      chip.textContent = sel.size;
+    }
+  }
+
+  function renderMsPanel(dim){
+    const panel = document.querySelector('.mspanel[data-panel="'+dim+'"]');
+    const cfg = DIM_CONFIG[dim];
+    const counts = buildOptionCounts(dim);
+    // available (count>0, or already selected) options float to the top; keeps relative order within each group
+    const values = allValuesFor(dim).slice().sort((a,b)=>{
+      const da = ((counts[a]||0)===0 && !state[dim].has(a)) ? 1 : 0;
+      const db = ((counts[b]||0)===0 && !state[dim].has(b)) ? 1 : 0;
+      return da - db;
+    });
+    panel.innerHTML = '';
+    if (cfg.searchable){
+      const searchInput = document.createElement('input');
+      searchInput.type = 'text';
+      searchInput.className = 'ms-search-input';
+      searchInput.placeholder = 'พิมพ์เพื่อค้นหา'+cfg.label+'...';
+      searchInput.addEventListener('click', e=>e.stopPropagation());
+      searchInput.addEventListener('input', ()=>{
+        const q = searchInput.value.trim().toLowerCase();
+        panel.querySelectorAll('.msopt').forEach(row=>{
+          const txt = row.querySelector('.oplabel').textContent.toLowerCase();
+          row.style.display = txt.includes(q) ? '' : 'none';
+        });
+      });
+      panel.appendChild(searchInput);
+    }
+    values.forEach(v=>{
+      const c = counts[v] || 0;
+      const row = document.createElement('label');
+      row.className = 'msopt' + (c===0 && !state[dim].has(v) ? ' disabled' : '');
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = state[dim].has(v);
+      cb.addEventListener('change', ()=>{
+        if (cb.checked) state[dim].add(v); else state[dim].delete(v);
+        onFilterChange();
+      });
+      const nm = document.createElement('span'); nm.className='oplabel'; nm.textContent = v;
+      const ct = document.createElement('span'); ct.className='opcount'; ct.textContent = c;
+      row.appendChild(cb); row.appendChild(nm); row.appendChild(ct);
+      panel.appendChild(row);
+    });
+    const actions = document.createElement('div');
+    actions.className = 'mspanel-actions';
+    const clearBtn = document.createElement('button'); clearBtn.textContent = 'ล้างค่า';
+    clearBtn.addEventListener('click', ()=>{ state[dim].clear(); onFilterChange(); });
+    const allBtn = document.createElement('button'); allBtn.textContent = 'เลือกทั้งหมด';
+    allBtn.addEventListener('click', ()=>{ values.forEach(v=>{ if((counts[v]||0)>0) state[dim].add(v); }); onFilterChange(); });
+    actions.appendChild(clearBtn); actions.appendChild(allBtn);
+    panel.appendChild(actions);
+  }
+
+  function renderAllFilterUI(){
+    Object.keys(DIM_CONFIG).forEach(dim=>{ renderMsButton(dim); renderMsPanel(dim); });
+  }
+
+  document.querySelectorAll('.msbtn').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const dim = btn.getAttribute('data-target');
+      const panel = document.querySelector('.mspanel[data-panel="'+dim+'"]');
+      const wasOpen = panel.classList.contains('open');
+      document.querySelectorAll('.mspanel').forEach(p=>p.classList.remove('open'));
+      if (!wasOpen) panel.classList.add('open');
+    });
+  });
+  document.addEventListener('click', ()=>{ document.querySelectorAll('.mspanel').forEach(p=>p.classList.remove('open')); });
+  document.querySelectorAll('.mspanel').forEach(p=>p.addEventListener('click', e=>e.stopPropagation()));
+
+  document.getElementById('searchInput').addEventListener('input', (e)=>{
+    state.search = e.target.value.trim();
+    onFilterChange();
+  });
+  document.getElementById('resetBtn').addEventListener('click', ()=>{
+    Object.keys(DIM_CONFIG).forEach(d=>state[d].clear());
+    state.search = '';
+    document.getElementById('searchInput').value = '';
+    zeroOnly = false;
+    document.getElementById('zeroToggle').classList.remove('active');
+    onFilterChange();
+  });
+
+  // ---------- tooltip helper ----------
+  const tooltipEl = document.getElementById('tooltip');
+  function showTooltip(x, y, html){
+    tooltipEl.innerHTML = html;
+    tooltipEl.style.opacity = '1';
+    const rect = tooltipEl.getBoundingClientRect();
+    let left = x + 14, top = y - 10;
+    if (left + rect.width > window.innerWidth - 10) left = x - rect.width - 14;
+    if (top + rect.height > window.innerHeight - 10) top = window.innerHeight - rect.height - 10;
+    tooltipEl.style.left = left + 'px';
+    tooltipEl.style.top = top + 'px';
+  }
+  function hideTooltip(){ tooltipEl.style.opacity = '0'; }
+
+  // ---------- KPI ----------
+  function renderKPI(){
+    const shops = filteredShops();
+    const targetPrebook = shops.reduce((a,s)=>a+s.targetPrebook,0);
+    const actualPrebook = shops.reduce((a,s)=>a+s.actualPrebook,0);
+    const targetAmount = shops.reduce((a,s)=>a+s.targetAmount,0);
+    const actualAmount = shops.reduce((a,s)=>a+s.actualAmount,0);
+    const achPrebook = targetPrebook>0 ? actualPrebook/targetPrebook : 0;
+    const achAmount = targetAmount>0 ? actualAmount/targetAmount : 0;
+    const shopsWithBooking = shops.filter(s=>s.actualPrebook>0).length;
+    const totalShops = shops.length;
+    const shopsWithTarget = shops.filter(s=>s.targetPrebook>0);
+    const zeroShops = shopsWithTarget.filter(s=>s.actualPrebook===0).length;
+
+    const tiles = [
+      { label: 'Target Prebook (เครื่อง)', value: fmtInt(targetPrebook), foot: totalShops + ' สาขาในตัวกรองนี้' },
+      { label: 'Actual Prebook (เครื่อง)', value: fmtInt(actualPrebook), foot: shopsWithBooking + ' สาขามียอดจองแล้ว' },
+      { label: '%ACH Prebook', value: fmtPct(achPrebook), meter: achPrebook },
+      { label: 'สาขาที่มี Target แต่ยังไม่มียอดจอง', value: fmtInt(zeroShops), foot: shopsWithTarget.length ? fmtPct(zeroShops/shopsWithTarget.length) + ' ของสาขาที่มีเป้าหมาย ('+shopsWithTarget.length+' สาขา)' : 'ไม่มีสาขาที่มีเป้าหมายในตัวกรองนี้' },
+      { label: 'Target Amount', value: fmtMoneyCompact(targetAmount), foot: fmtMoney(targetAmount) },
+      { label: 'Actual Amount', value: fmtMoneyCompact(actualAmount), foot: fmtMoney(actualAmount) },
+      { label: '%ACH Amount', value: fmtPct(achAmount), meter: achAmount },
+      { label: 'มูลค่าเฉลี่ยต่อยอดจอง', value: actualPrebook>0 ? fmtMoneyCompact(actualAmount/actualPrebook) : '-', foot: 'Amount / Actual Prebook' },
+    ];
+
+    const grid = document.getElementById('kpiGrid');
+    grid.innerHTML = '';
+    tiles.forEach(t=>{
+      const div = document.createElement('div');
+      div.className = 'tile';
+      let inner = '<div class="label">'+t.label+'</div><div class="value">'+t.value+'</div>';
+      if (t.meter !== undefined){
+        const st = statusOf(t.meter);
+        inner += '<div class="meter-track"><div class="meter-fill" style="width:'+Math.min(100,t.meter*100)+'%;background:'+STATUS_VAR[st]+'"></div></div>';
+      } else if (t.foot) {
+        inner += '<div class="foot">'+t.foot+'</div>';
+      }
+      div.innerHTML = inner;
+      grid.appendChild(div);
+    });
+  }
+
+  // ---------- Area %ACH chart ----------
+  function renderAreaAchChart(){
+    const shops = filteredShops();
+    const byArea = {};
+    shops.forEach(s=>{
+      if (!byArea[s.area]) byArea[s.area] = {target:0, actual:0, targetAmt:0, actualAmt:0};
+      byArea[s.area].target += s.targetPrebook;
+      byArea[s.area].actual += s.actualPrebook;
+      byArea[s.area].targetAmt += s.targetAmount;
+      byArea[s.area].actualAmt += s.actualAmount;
+    });
+    let rows = Object.keys(byArea).map(area=>{
+      const d = byArea[area];
+      const pct = d.target>0 ? d.actual/d.target : 0;
+      return {area, pct, target:d.target, actual:d.actual};
+    });
+    rows.sort((a,b)=> b.pct - a.pct);
+    const totalActualAllAreas = rows.reduce((a,r)=>a+r.actual,0);
+
+    const el = document.getElementById('areaAchChart');
+    el.innerHTML = '';
+    if (rows.length===0){ el.innerHTML = '<div class="empty-state">ไม่มีข้อมูลตามตัวกรองนี้</div>'; return; }
+    rows.forEach(r=>{
+      const st = r.target>0 ? statusOf(r.pct) : 'critical';
+      const contribPct = totalActualAllAreas>0 ? (r.actual/totalActualAllAreas*100) : 0;
+      const item = document.createElement('div');
+      item.className = 'hbar-item';
+      item.innerHTML = '<div class="hbar-top"><span class="nm">'+r.area+'</span><span><span class="pct">'+fmtPct(r.pct)+'</span><span class="contrib">'+contribPct.toFixed(1)+'% Contribution</span></span></div>'+
+        '<div class="hbar-track"><div class="hbar-fill" style="width:'+Math.min(100,r.pct*100)+'%;background:'+STATUS_VAR[st]+'"></div></div>';
+      const track = item.querySelector('.hbar-track');
+      track.addEventListener('mousemove', (e)=>{
+        showTooltip(e.clientX, e.clientY, '<div class="tt-title">'+r.area+'</div>'+
+          '<div class="tt-row"><span class="k">Target</span><span>'+fmtInt(r.target)+'</span></div>'+
+          '<div class="tt-row"><span class="k">Actual</span><span>'+fmtInt(r.actual)+'</span></div>'+
+          '<div class="tt-row"><span class="k">%ACH</span><span>'+fmtPct(r.pct)+'</span></div>'+
+          '<div class="tt-row"><span class="k">% Contribution (Actual)</span><span>'+contribPct.toFixed(1)+'%</span></div>');
+      });
+      track.addEventListener('mouseleave', hideTooltip);
+      el.appendChild(item);
+    });
+  }
+
+  // ---------- Region bar chart (target vs actual) ----------
+  function renderRegionBarChart(){
+    const shops = filteredShops();
+    const byRegion = {};
+    shops.forEach(s=>{
+      if (!byRegion[s.region]) byRegion[s.region] = {target:0, actual:0};
+      byRegion[s.region].target += s.targetPrebook;
+      byRegion[s.region].actual += s.actualPrebook;
+    });
+    const regions = orderList(Object.keys(byRegion), REGION_ORDER);
+    const maxVal = Math.max(1, ...regions.map(r=>byRegion[r].target));
+    const totalTargetAll = regions.reduce((a,r)=>a+byRegion[r].target,0);
+    const totalActualAll = regions.reduce((a,r)=>a+byRegion[r].actual,0);
+    const el = document.getElementById('regionBarChart');
+    el.innerHTML = '';
+    if (regions.length===0){ el.innerHTML = '<div class="empty-state">ไม่มีข้อมูลตามตัวกรองนี้</div>'; return; }
+    regions.forEach(r=>{
+      const d = byRegion[r];
+      const pct = d.target>0 ? d.actual/d.target : 0;
+      const targetContrib = totalTargetAll>0 ? d.target/totalTargetAll*100 : 0;
+      const actualContrib = totalActualAll>0 ? d.actual/totalActualAll*100 : 0;
+      // target row
+      const row1 = document.createElement('div'); row1.className='barrow';
+      row1.innerHTML = '<div class="lbl">'+r+'</div><div class="track"><div class="bg"></div><div class="fill" style="width:'+(d.target/maxVal*100)+'%;top:6px;height:10px;background:var(--target-bar)"></div></div><div class="val">'+fmtInt(d.target)+' <span class="val-pct">('+targetContrib.toFixed(1)+'%)</span></div>';
+      const row2 = document.createElement('div'); row2.className='barrow'; row2.style.marginBottom='10px';
+      row2.innerHTML = '<div class="lbl"></div><div class="track"><div class="fill" style="width:'+(d.actual/maxVal*100)+'%;top:6px;height:10px;background:var(--series-1)"></div></div><div class="val">'+fmtInt(d.actual)+' <span class="val-pct">('+actualContrib.toFixed(1)+'%)</span></div>';
+      [row1,row2].forEach((row,i)=>{
+        const fill = row.querySelector('.fill');
+        fill.addEventListener('mousemove', (e)=>{
+          showTooltip(e.clientX, e.clientY, '<div class="tt-title">'+r+'</div>'+
+            '<div class="tt-row"><span class="k">Target</span><span>'+fmtInt(d.target)+'</span></div>'+
+            '<div class="tt-row"><span class="k">Actual</span><span>'+fmtInt(d.actual)+'</span></div>'+
+            '<div class="tt-row"><span class="k">%ACH</span><span>'+fmtPct(pct)+'</span></div>'+
+            '<div class="tt-row"><span class="k">% Contribution (Target)</span><span>'+targetContrib.toFixed(1)+'%</span></div>'+
+            '<div class="tt-row"><span class="k">% Contribution (Actual)</span><span>'+actualContrib.toFixed(1)+'%</span></div>');
+        });
+        fill.addEventListener('mouseleave', hideTooltip);
+      });
+      el.appendChild(row1); el.appendChild(row2);
+    });
+  }
+
+  // ---------- Model donut ----------
+  function renderModelDonut(){
+    const bookings = filteredBookings();
+    const byModel = {};
+    bookings.forEach(b=>{ byModel[b.model] = (byModel[b.model]||0) + b.qty; });
+    const models = orderList(Object.keys(byModel), MODEL_ORDER);
+    const total = models.reduce((a,m)=>a+byModel[m],0);
+    const el = document.getElementById('modelDonut');
+    el.innerHTML = '';
+    if (total===0){ el.innerHTML = '<div class="empty-state">ไม่มีข้อมูลยอดจองตามตัวกรองนี้</div>'; return; }
+
+    const size = 180, r = 70, cx = size/2, cy = size/2, sw = 26;
+    const circumference = 2*Math.PI*r;
+    let offset = 0;
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNS,'svg');
+    svg.setAttribute('width', size); svg.setAttribute('height', size);
+    svg.setAttribute('viewBox', '0 0 '+size+' '+size);
+
+    const bg = document.createElementNS(svgNS,'circle');
+    bg.setAttribute('cx',cx); bg.setAttribute('cy',cy); bg.setAttribute('r',r);
+    bg.setAttribute('fill','none'); bg.setAttribute('stroke','var(--gridline)'); bg.setAttribute('stroke-width', sw);
+    svg.appendChild(bg);
+
+    const segs = [];
+    models.forEach(m=>{
+      const val = byModel[m];
+      const frac = val/total;
+      const dash = frac*circumference - 2; // 2px gap
+      const circle = document.createElementNS(svgNS,'circle');
+      circle.setAttribute('cx',cx); circle.setAttribute('cy',cy); circle.setAttribute('r',r);
+      circle.setAttribute('fill','none');
+      circle.setAttribute('stroke', MODEL_COLOR[m] || 'var(--series-6)');
+      circle.setAttribute('stroke-width', sw);
+      circle.setAttribute('stroke-dasharray', Math.max(0,dash)+' '+(circumference-Math.max(0,dash)));
+      circle.setAttribute('stroke-dashoffset', -offset);
+      circle.setAttribute('transform','rotate(-90 '+cx+' '+cy+')');
+      circle.style.cursor='pointer';
+      circle.addEventListener('mousemove',(e)=>{
+        showTooltip(e.clientX,e.clientY,'<div class="tt-title">'+m+'</div>'+
+          '<div class="tt-row"><span class="k">จำนวน</span><span>'+fmtInt(val)+' เครื่อง</span></div>'+
+          '<div class="tt-row"><span class="k">สัดส่วน</span><span>'+fmtPct(frac)+'</span></div>');
+      });
+      circle.addEventListener('mouseleave', hideTooltip);
+      svg.appendChild(circle);
+      offset += frac*circumference;
+    });
+
+    const label = document.createElementNS(svgNS,'text');
+    label.setAttribute('x', cx); label.setAttribute('y', cy-3);
+    label.setAttribute('text-anchor','middle'); label.setAttribute('font-size','22'); label.setAttribute('font-weight','700');
+    label.setAttribute('fill','var(--text-primary)');
+    label.textContent = fmtInt(total);
+    svg.appendChild(label);
+    const label2 = document.createElementNS(svgNS,'text');
+    label2.setAttribute('x', cx); label2.setAttribute('y', cy+16);
+    label2.setAttribute('text-anchor','middle'); label2.setAttribute('font-size','10.5'); label2.setAttribute('fill','var(--text-muted)');
+    label2.textContent = 'เครื่อง';
+    svg.appendChild(label2);
+
+    const wrap = document.createElement('div'); wrap.className = 'donut-wrap';
+    wrap.appendChild(svg);
+    const legend = document.createElement('div'); legend.className = 'donut-legend';
+    models.forEach(m=>{
+      const val = byModel[m];
+      const row = document.createElement('div'); row.className='drow';
+      row.innerHTML = '<span class="sw" style="background:'+(MODEL_COLOR[m]||'var(--series-6)')+'"></span><span class="nm">'+m+'</span><span class="n">'+fmtInt(val)+' ('+fmtPct(val/total)+')</span>';
+      legend.appendChild(row);
+    });
+    wrap.appendChild(legend);
+    el.appendChild(wrap);
+  }
+
+  // ---------- Color/Capacity bar chart ----------
+  function renderColorBarChart(){
+    const bookings = filteredBookings();
+    const byColor = {};
+    bookings.forEach(b=>{
+      if (!byColor[b.color]) byColor[b.color] = {'256GB':0,'512GB':0,total:0};
+      byColor[b.color][b.capacity] = (byColor[b.color][b.capacity]||0) + b.qty;
+      byColor[b.color].total += b.qty;
+    });
+    const colors = Object.keys(byColor).sort((a,b)=>byColor[b].total - byColor[a].total);
+    const maxVal = Math.max(1, ...colors.map(c=>byColor[c].total));
+    const grandTotal = colors.reduce((a,c)=>a+byColor[c].total,0);
+    const el = document.getElementById('colorBarChart');
+    el.innerHTML = '';
+    if (colors.length===0){ el.innerHTML = '<div class="empty-state">ไม่มีข้อมูลยอดจองตามตัวกรองนี้</div>'; return; }
+    colors.forEach(c=>{
+      const d = byColor[c];
+      const pct = grandTotal>0 ? d.total/grandTotal*100 : 0;
+      const row = document.createElement('div'); row.className='barrow';
+      const sw = COLOR_SWATCH[c] || 'var(--series-6)';
+      row.innerHTML = '<div class="lbl">'+c+'</div><div class="track"><div class="bg"></div><div class="fill" style="width:'+(d.total/maxVal*100)+'%;top:6px;height:10px;background:'+sw+'"></div></div><div class="val">'+fmtInt(d.total)+' <span class="val-pct">('+pct.toFixed(1)+'%)</span></div>';
+      const fill = row.querySelector('.fill');
+      fill.addEventListener('mousemove',(e)=>{
+        showTooltip(e.clientX,e.clientY,'<div class="tt-title">'+c+'</div>'+
+          '<div class="tt-row"><span class="k">256GB</span><span>'+fmtInt(d['256GB']||0)+'</span></div>'+
+          '<div class="tt-row"><span class="k">512GB</span><span>'+fmtInt(d['512GB']||0)+'</span></div>'+
+          '<div class="tt-row"><span class="k">รวม</span><span>'+fmtInt(d.total)+'</span></div>'+
+          '<div class="tt-row"><span class="k">% Contribution</span><span>'+pct.toFixed(1)+'%</span></div>');
+      });
+      fill.addEventListener('mouseleave', hideTooltip);
+      el.appendChild(row);
+    });
+  }
+
+  // ---------- Generic reusable chart helpers (used by Detail tab) ----------
+  const GENERIC_COLORS = ['var(--series-1)','var(--series-2)','var(--series-3)','var(--series-4)','var(--series-5)','var(--series-6)','var(--series-7)','var(--series-8)'];
+
+  // items: [{label, value, tooltip?}]  opts: {sort:true, unit:'', color: fn(item,i)=>css, valueFmt: fn}
+  function renderHBarList(elId, items, opts){
+    opts = opts || {};
+    const el = document.getElementById(elId);
+    el.innerHTML = '';
+    if (!items.length){ el.innerHTML = '<div class="empty-state">ไม่มีข้อมูลตามตัวกรองนี้</div>'; return; }
+    const grandTotal = opts.pctTotal !== undefined ? opts.pctTotal : items.reduce((a,x)=>a+x.value,0);
+    const showPct = opts.showPct !== false;
+    let list = items.slice();
+    if (opts.sort !== false) list.sort((a,b)=>b.value-a.value);
+    if (opts.limit) list = list.slice(0, opts.limit);
+    const maxVal = Math.max(1, ...list.map(x=>x.value));
+    const valueFmt = opts.valueFmt || fmtInt;
+    list.forEach((it,i)=>{
+      const row = document.createElement('div'); row.className='barrow';
+      const color = opts.color ? opts.color(it,i) : GENERIC_COLORS[i % GENERIC_COLORS.length];
+      const lbl = opts.labelPrefix ? (opts.labelPrefix(it,i)+it.label) : it.label;
+      const pct = grandTotal>0 ? (it.value/grandTotal*100) : 0;
+      const pctHtml = showPct ? ' <span class="val-pct">('+pct.toFixed(1)+'%)</span>' : '';
+      row.innerHTML = '<div class="lbl" title="'+String(it.label).replace(/"/g,'&quot;')+'">'+lbl+'</div>'+
+        '<div class="track"><div class="bg"></div><div class="fill" style="width:'+(it.value/maxVal*100)+'%;top:6px;height:10px;background:'+color+'"></div></div>'+
+        '<div class="val">'+valueFmt(it.value)+(opts.unit||'')+pctHtml+'</div>';
+      const fill = row.querySelector('.fill');
+      fill.addEventListener('mousemove',(e)=>{
+        showTooltip(e.clientX,e.clientY,'<div class="tt-title">'+it.label+'</div>'+
+          (it.tooltip || ('<div class="tt-row"><span class="k">จำนวน</span><span>'+valueFmt(it.value)+(opts.unit||'')+'</span></div>'+
+          (showPct ? '<div class="tt-row"><span class="k">% Contribution</span><span>'+pct.toFixed(1)+'%</span></div>' : ''))));
+      });
+      fill.addEventListener('mouseleave', hideTooltip);
+      el.appendChild(row);
+    });
+  }
+
+  // items: [{label, value}] -> generic donut, reused for binary/small categorical splits
+  function renderGenericDonut(elId, items, opts){
+    opts = opts || {};
+    const el = document.getElementById(elId);
+    el.innerHTML = '';
+    const total = items.reduce((a,x)=>a+x.value,0);
+    if (total===0){ el.innerHTML = '<div class="empty-state">ไม่มีข้อมูลตามตัวกรองนี้</div>'; return; }
+    const size = 180, r = 70, cx = size/2, cy = size/2, sw = 26;
+    const circumference = 2*Math.PI*r;
+    let offset = 0;
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNS,'svg');
+    svg.setAttribute('width', size); svg.setAttribute('height', size); svg.setAttribute('viewBox','0 0 '+size+' '+size);
+    const bg = document.createElementNS(svgNS,'circle');
+    bg.setAttribute('cx',cx); bg.setAttribute('cy',cy); bg.setAttribute('r',r);
+    bg.setAttribute('fill','none'); bg.setAttribute('stroke','var(--gridline)'); bg.setAttribute('stroke-width', sw);
+    svg.appendChild(bg);
+    items.forEach((it,i)=>{
+      const frac = it.value/total;
+      const dash = frac*circumference - (items.length>1?2:0);
+      const circle = document.createElementNS(svgNS,'circle');
+      circle.setAttribute('cx',cx); circle.setAttribute('cy',cy); circle.setAttribute('r',r);
+      circle.setAttribute('fill','none');
+      const color = opts.color ? opts.color(it,i) : GENERIC_COLORS[i % GENERIC_COLORS.length];
+      circle.setAttribute('stroke', color);
+      circle.setAttribute('stroke-width', sw);
+      circle.setAttribute('stroke-dasharray', Math.max(0,dash)+' '+(circumference-Math.max(0,dash)));
+      circle.setAttribute('stroke-dashoffset', -offset);
+      circle.setAttribute('transform','rotate(-90 '+cx+' '+cy+')');
+      circle.style.cursor='pointer';
+      circle.addEventListener('mousemove',(e)=>{
+        showTooltip(e.clientX,e.clientY,'<div class="tt-title">'+it.label+'</div>'+
+          '<div class="tt-row"><span class="k">จำนวน</span><span>'+fmtInt(it.value)+'</span></div>'+
+          '<div class="tt-row"><span class="k">สัดส่วน</span><span>'+fmtPct(frac)+'</span></div>');
+      });
+      circle.addEventListener('mouseleave', hideTooltip);
+      svg.appendChild(circle);
+      offset += frac*circumference;
+    });
+    const label = document.createElementNS(svgNS,'text');
+    label.setAttribute('x', cx); label.setAttribute('y', cy-3);
+    label.setAttribute('text-anchor','middle'); label.setAttribute('font-size','22'); label.setAttribute('font-weight','700');
+    label.setAttribute('fill','var(--text-primary)'); label.textContent = fmtInt(total);
+    svg.appendChild(label);
+    const label2 = document.createElementNS(svgNS,'text');
+    label2.setAttribute('x', cx); label2.setAttribute('y', cy+16);
+    label2.setAttribute('text-anchor','middle'); label2.setAttribute('font-size','10.5'); label2.setAttribute('fill','var(--text-muted)');
+    label2.textContent = opts.centerUnit || 'รายการ';
+    svg.appendChild(label2);
+    const wrap = document.createElement('div'); wrap.className = 'donut-wrap';
+    wrap.appendChild(svg);
+    const legend = document.createElement('div'); legend.className = 'donut-legend';
+    items.forEach((it,i)=>{
+      const color = opts.color ? opts.color(it,i) : GENERIC_COLORS[i % GENERIC_COLORS.length];
+      const row = document.createElement('div'); row.className='drow';
+      row.innerHTML = '<span class="sw" style="background:'+color+'"></span><span class="nm">'+it.label+'</span><span class="n">'+fmtInt(it.value)+' ('+fmtPct(it.value/total)+')</span>';
+      legend.appendChild(row);
+    });
+    wrap.appendChild(legend);
+    el.appendChild(wrap);
+  }
+
+  function groupCount(bookings, keyFn){
+    const m = {};
+    bookings.forEach(b=>{
+      const k = keyFn(b);
+      if (k===null || k===undefined || k==='') return;
+      m[k] = (m[k]||0) + 1;
+    });
+    return Object.keys(m).map(k=>({label:k, value:m[k]}));
+  }
+
+  const SHOP_SUBTYPE_SHORT = {
+    'True Shop by WW/Matching': 'True Shop by WW / Matching',
+    'WW Dtac Hall': 'WW Dtac Hall',
+    'True Shop by WW': 'True Shop by WW',
+  };
+  const PURCHASE_TYPE_LABEL = { 'device_with_package': 'เครื่องพร้อมแพ็กเกจ', 'device_only': 'เครื่องเปล่า' };
+
+  // ---------- Detail tab KPI ----------
+  function renderDetailKPI(){
+    const b = filteredBookings();
+    const n = b.length;
+    const grid = document.getElementById('detailKpiGrid');
+    grid.innerHTML = '';
+    if (n===0){
+      grid.innerHTML = '<div class="tile" style="grid-column:1/-1"><div class="empty-state">ไม่มีรายการจองตามตัวกรองนี้</div></div>';
+      return;
+    }
+    const depositCollected = b.reduce((a,x)=>a+(x.couponPrice||0),0);
+    const freeGiftRate = b.filter(x=>x.freeGift).length / n;
+    const withPackage = b.filter(x=>x.purchaseType==='device_with_package').length;
+    const discounted = b.filter(x=>x.discount>0);
+    const avgDiscount = discounted.length ? discounted.reduce((a,x)=>a+x.discount,0)/discounted.length : 0;
+    const provinces = new Set(b.map(x=>x.province).filter(Boolean));
+    const channels = new Set(b.map(x=>x.source).filter(Boolean));
+
+    const tiles = [
+      { label: 'รายการจองทั้งหมด', value: fmtInt(n), foot: channels.size + ' ช่องทางการจอง' },
+      { label: 'ยอดมัดจำที่เก็บแล้ว', value: fmtMoneyCompact(depositCollected), foot: fmtMoney(depositCollected) },
+      { label: 'อัตราแถมของกำนัล', value: fmtPct(freeGiftRate), meter: freeGiftRate },
+      { label: 'ซื้อพร้อมแพ็กเกจรายเดือน', value: fmtInt(withPackage)+' / '+n, foot: fmtPct(withPackage/n)+' ของรายการทั้งหมด' },
+      { label: 'ส่วนลด Trade-in เฉลี่ย', value: discounted.length ? fmtMoney(avgDiscount) : '-', foot: discounted.length+' จาก '+n+' รายการมีส่วนลด' },
+      { label: 'จังหวัดที่มาจอง', value: fmtInt(provinces.size), foot: 'จังหวัดที่แตกต่างกัน' },
+    ];
+    tiles.forEach(t=>{
+      const div = document.createElement('div'); div.className='tile';
+      let inner = '<div class="label">'+t.label+'</div><div class="value">'+t.value+'</div>';
+      if (t.meter !== undefined){
+        const st = statusOf(t.meter);
+        inner += '<div class="meter-track"><div class="meter-fill" style="width:'+Math.min(100,t.meter*100)+'%;background:'+STATUS_VAR[st]+'"></div></div>';
+      } else if (t.foot) {
+        inner += '<div class="foot">'+t.foot+'</div>';
+      }
+      div.innerHTML = inner;
+      grid.appendChild(div);
+    });
+  }
+
+  function renderDetailCharts(){
+    const b = filteredBookings();
+
+    renderHBarList('sourceChart', groupCount(b, x=>x.source), { valueFmt: v=>fmtInt(v)+' รายการ' });
+    renderHBarList('paymentChart', groupCount(b, x=>x.payment), { valueFmt: v=>fmtInt(v)+' รายการ' });
+
+    renderHBarList('segmentChart', groupCount(b, x=>x.segment), { valueFmt: v=>fmtInt(v)+' รายการ' });
+
+    const pkgItems = groupCount(b.filter(x=>x.package), x=>x.package);
+    renderHBarList('packageChart', pkgItems, { valueFmt: v=>fmtInt(v)+' รายการ' });
+
+    const purchaseItems = groupCount(b, x=>PURCHASE_TYPE_LABEL[x.purchaseType]||x.purchaseType);
+    renderGenericDonut('purchaseTypeDonut', purchaseItems, { color:(it)=> it.label==='เครื่องพร้อมแพ็กเกจ' ? 'var(--series-1)' : 'var(--series-2)', centerUnit:'รายการ' });
+
+    renderHBarList('shopSubTypeChart', groupCount(b, x=>SHOP_SUBTYPE_SHORT[x.shopSubType]||x.shopSubType), { valueFmt: v=>fmtInt(v)+' รายการ' });
+
+    const PICKUP_ORDER = ['10:00-13:00','13:00-16:00','16:00-20:00'];
+    const pickupItems = groupCount(b, x=>x.pickupTime);
+    pickupItems.sort((a,c)=>PICKUP_ORDER.indexOf(a.label)-PICKUP_ORDER.indexOf(c.label));
+    renderHBarList('pickupTimeChart', pickupItems, { sort:false, color:()=>'var(--series-1)', valueFmt: v=>fmtInt(v)+' รายการ' });
+
+    const receiptItems = groupCount(b, x=>x.receiptStatus);
+    renderGenericDonut('receiptStatusDonut', receiptItems, { color:(it)=> it.label==='In Process' ? 'var(--series-1)' : 'var(--status-warning)', centerUnit:'รายการ' });
+
+    renderHBarList('provinceChart', groupCount(b, x=>x.province), { limit: 10, valueFmt: v=>fmtInt(v)+' ราย' });
+
+    const pickupDateItems = groupCount(b, x=>x.pickupDate).sort((a,c)=>a.label.localeCompare(c.label));
+    const pickupDateLabeled = pickupDateItems.map(it=>{
+      let d; try { d = new Date(it.label+'T00:00:00'); } catch(e){ d = null; }
+      const label = d ? (d.toLocaleDateString('th-TH',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'})) : it.label;
+      return { label, value: it.value };
+    });
+    renderHBarList('pickupDateChart', pickupDateLabeled, { sort:false, color:()=>'var(--series-1)', valueFmt: v=>fmtInt(v)+' คน' });
+
+    const buckets = [
+      { label:'ไม่มีส่วนลด (0)', test: v=>v===0 },
+      { label:'1 - 2,999 บาท', test: v=>v>0 && v<3000 },
+      { label:'3,000 - 4,499 บาท', test: v=>v>=3000 && v<4500 },
+      { label:'4,500 บาทขึ้นไป', test: v=>v>=4500 },
+    ];
+    const discountItems = buckets.map(bk=>({ label: bk.label, value: b.filter(x=>bk.test(x.discount||0)).length }));
+    renderHBarList('discountChart', discountItems, { sort:false, color:(it,i)=> i===0 ? 'var(--target-bar)' : 'var(--series-1)', valueFmt: v=>fmtInt(v)+' รายการ' });
+
+    // hourly booking pace, chronological
+    const paceMap = {};
+    b.forEach(x=>{
+      if (!x.txnDateTime) return;
+      const hourKey = x.txnDateTime.slice(0,13)+':00'; // YYYY-MM-DD HH:00
+      paceMap[hourKey] = (paceMap[hourKey]||0)+1;
+    });
+    const paceKeys = Object.keys(paceMap).sort();
+    const paceItems = paceKeys.map(k=>{
+      const d = new Date(k.replace(' ','T')+':00');
+      const label = d.toLocaleDateString('th-TH',{day:'2-digit',month:'2-digit'}) + ' ' + k.slice(11,16) + ' น.';
+      return { label, value: paceMap[k] };
+    });
+    renderHBarList('paceChart', paceItems, { sort:false, color:()=>'var(--series-1)', valueFmt: v=>fmtInt(v)+' รายการ' });
+  }
+
+  // ---------- Top shops chart ----------
+  function renderTopShopsChart(){
+    const allShops = filteredShops().filter(s=>s.actualPrebook>0);
+    const totalActualAll = filteredShops().reduce((a,s)=>a+s.actualPrebook,0);
+    const shops = allShops.slice();
+    shops.sort((a,b)=> b.actualPrebook - a.actualPrebook || b.actualAmount - a.actualAmount);
+    const top = shops.slice(0,10);
+    const el = document.getElementById('topShopsChart');
+    el.innerHTML = '';
+    if (top.length===0){ el.innerHTML = '<div class="empty-state">ไม่มีสาขาที่มียอดจองตามตัวกรองนี้</div>'; return; }
+    const maxVal = Math.max(...top.map(s=>s.actualPrebook));
+    top.forEach((s,i)=>{
+      const pct = totalActualAll>0 ? s.actualPrebook/totalActualAll*100 : 0;
+      const row = document.createElement('div'); row.className='barrow';
+      row.innerHTML = '<div class="lbl">'+(i+1)+'. '+s.name+'</div><div class="track"><div class="bg"></div><div class="fill" style="width:'+(s.actualPrebook/maxVal*100)+'%;top:6px;height:10px;background:var(--series-1)"></div></div><div class="val">'+fmtInt(s.actualPrebook)+' เครื่อง <span class="val-pct">('+pct.toFixed(1)+'%)</span></div>';
+      const fill = row.querySelector('.fill');
+      fill.addEventListener('mousemove',(e)=>{
+        showTooltip(e.clientX,e.clientY,'<div class="tt-title">'+s.name+'</div>'+
+          '<div class="tt-row"><span class="k">พื้นที่</span><span>'+s.area+'</span></div>'+
+          '<div class="tt-row"><span class="k">Actual Prebook</span><span>'+fmtInt(s.actualPrebook)+' เครื่อง</span></div>'+
+          '<div class="tt-row"><span class="k">Actual Amount</span><span>'+fmtMoney(s.actualAmount)+'</span></div>'+
+          '<div class="tt-row"><span class="k">%ACH Prebook</span><span>'+(s.targetPrebook>0?fmtPct(s.actualPrebook/s.targetPrebook):'-')+'</span></div>'+
+          '<div class="tt-row"><span class="k">% Contribution</span><span>'+pct.toFixed(1)+'%</span></div>');
+      });
+      fill.addEventListener('mouseleave', hideTooltip);
+      el.appendChild(row);
+    });
+  }
+
+  // ---------- Shop table ----------
+  let zeroOnly = false;
+  const shopSort = { col: 'actualAmount', dir: 'desc' };
+  let shopPage = 0;
+  const SHOP_PAGE_SIZE = 15;
+
+  const SHOP_COLS = [
+    { key: 'code', label: 'รหัสสาขา', num:false },
+    { key: 'name', label: 'ชื่อสาขา', num:false },
+    { key: 'region', label: 'ภาค', num:false },
+    { key: 'area', label: 'พื้นที่', num:false },
+    { key: 'type', label: 'รูปแบบ', num:false },
+    { key: 'size', label: 'ขนาด', num:false },
+    { key: 'status', label: 'สถานะ', num:false },
+    { key: 'targetPrebook', label: 'Target Prebook', num:true },
+    { key: 'actualPrebook', label: 'Actual Prebook', num:true },
+    { key: 'achPrebook', label: '%ACH Prebook', num:true },
+    { key: 'targetAmount', label: 'Target Amount', num:true },
+    { key: 'actualAmount', label: 'Actual Amount', num:true },
+    { key: 'achAmount', label: '%ACH Amount', num:true },
+  ];
+
+  function renderShopTableHead(){
+    const thead = document.querySelector('#shopTable thead');
+    const tr = document.createElement('tr');
+    SHOP_COLS.forEach(c=>{
+      const th = document.createElement('th');
+      th.textContent = c.label;
+      if (shopSort.col === c.key) {
+        const arrow = document.createElement('span'); arrow.className='arrow'; arrow.textContent = shopSort.dir==='asc'?'▲':'▼';
+        th.appendChild(arrow);
+      }
+      th.addEventListener('click', ()=>{
+        if (shopSort.col === c.key) shopSort.dir = shopSort.dir==='asc'?'desc':'asc';
+        else { shopSort.col = c.key; shopSort.dir = c.num ? 'desc':'asc'; }
+        shopPage = 0;
+        renderShopTable();
+      });
+      tr.appendChild(th);
+    });
+    thead.innerHTML = ''; thead.appendChild(tr);
+  }
+
+  function renderShopTable(){
+    let shops = filteredShops().map(s=>({
+      ...s,
+      achPrebook: s.targetPrebook>0 ? s.actualPrebook/s.targetPrebook : 0,
+      achAmount: s.targetAmount>0 ? s.actualAmount/s.targetAmount : 0,
+    }));
+    if (zeroOnly) shops = shops.filter(s=>s.targetPrebook>0 && s.actualPrebook===0);
+
+    shops.sort((a,b)=>{
+      const av = a[shopSort.col], bv = b[shopSort.col];
+      let cmp;
+      if (typeof av === 'string') cmp = av.localeCompare(bv);
+      else cmp = av - bv;
+      return shopSort.dir === 'asc' ? cmp : -cmp;
+    });
+
+    document.getElementById('shopTableCount').innerHTML = 'พบ <b>'+shops.length+'</b> สาขา';
+    renderShopTableHead();
+
+    const totalPages = Math.max(1, Math.ceil(shops.length/SHOP_PAGE_SIZE));
+    if (shopPage >= totalPages) shopPage = totalPages-1;
+    const pageRows = shops.slice(shopPage*SHOP_PAGE_SIZE, shopPage*SHOP_PAGE_SIZE + SHOP_PAGE_SIZE);
+
+    const tbody = document.querySelector('#shopTable tbody');
+    tbody.innerHTML = '';
+    if (pageRows.length===0){
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td colspan="'+SHOP_COLS.length+'" class="empty-state">ไม่พบข้อมูลตามตัวกรองนี้</td>';
+      tbody.appendChild(tr);
+    }
+    pageRows.forEach(s=>{
+      const tr = document.createElement('tr');
+      const achP = statusOf(s.achPrebook);
+      const achA = statusOf(s.achAmount);
+      tr.innerHTML =
+        '<td>'+s.code+'</td>'+
+        '<td class="strong">'+s.name+'</td>'+
+        '<td>'+s.region+'</td>'+
+        '<td>'+s.area+'</td>'+
+        '<td>'+s.type+'</td>'+
+        '<td>'+s.size+'</td>'+
+        '<td>'+s.status+'</td>'+
+        '<td class="num">'+fmtInt(s.targetPrebook)+'</td>'+
+        '<td class="num strong">'+fmtInt(s.actualPrebook)+'</td>'+
+        '<td class="num"><span class="pill '+achP+'">'+fmtPct(s.achPrebook)+'</span></td>'+
+        '<td class="num">'+fmtMoney(s.targetAmount)+'</td>'+
+        '<td class="num strong">'+fmtMoney(s.actualAmount)+'</td>'+
+        '<td class="num"><span class="pill '+achA+'">'+fmtPct(s.achAmount)+'</span></td>';
+      tbody.appendChild(tr);
+    });
+
+    const pager = document.getElementById('shopPager');
+    pager.innerHTML = '';
+    const prevBtn = document.createElement('button'); prevBtn.textContent = '← ก่อนหน้า'; prevBtn.disabled = shopPage===0;
+    prevBtn.addEventListener('click', ()=>{ shopPage--; renderShopTable(); });
+    const nextBtn = document.createElement('button'); nextBtn.textContent = 'ถัดไป →'; nextBtn.disabled = shopPage>=totalPages-1;
+    nextBtn.addEventListener('click', ()=>{ shopPage++; renderShopTable(); });
+    const info = document.createElement('span'); info.textContent = 'หน้า '+(shopPage+1)+' / '+totalPages;
+    pager.appendChild(prevBtn); pager.appendChild(info); pager.appendChild(nextBtn);
+  }
+
+  document.getElementById('zeroToggle').addEventListener('click', function(){
+    zeroOnly = !zeroOnly;
+    this.classList.toggle('active', zeroOnly);
+    shopPage = 0;
+    renderShopTable();
+  });
+
+  // ---------- Booking table ----------
+  const bookingSort = { col: 'prebookDate', dir: 'desc' };
+  let bookingPage = 0;
+  const BOOKING_PAGE_SIZE = 10;
+
+  const BOOKING_COLS = [
+    { key: 'bookingNo', label: 'Booking No.', num:false },
+    { key: 'prebookDate', label: 'วันที่จอง', num:false },
+    { key: 'model', label: 'รุ่น', num:false },
+    { key: 'capacity', label: 'ความจุ', num:false },
+    { key: 'color', label: 'สี', num:false },
+    { key: 'shopName', label: 'สาขา', num:false },
+    { key: 'area', label: 'พื้นที่', num:false },
+    { key: 'amount', label: 'ยอดเงิน', num:true },
+    { key: 'source', label: 'ช่องทาง', num:false },
+    { key: 'depositStatus', label: 'สถานะมัดจำ', num:false },
+  ];
+
+  function renderBookingTableHead(){
+    const thead = document.querySelector('#bookingTable thead');
+    const tr = document.createElement('tr');
+    BOOKING_COLS.forEach(c=>{
+      const th = document.createElement('th');
+      th.textContent = c.label;
+      if (bookingSort.col === c.key) {
+        const arrow = document.createElement('span'); arrow.className='arrow'; arrow.textContent = bookingSort.dir==='asc'?'▲':'▼';
+        th.appendChild(arrow);
+      }
+      th.addEventListener('click', ()=>{
+        if (bookingSort.col === c.key) bookingSort.dir = bookingSort.dir==='asc'?'desc':'asc';
+        else { bookingSort.col = c.key; bookingSort.dir = c.num ? 'desc':'asc'; }
+        bookingPage = 0;
+        renderBookingTable();
+      });
+      tr.appendChild(th);
+    });
+    thead.innerHTML=''; thead.appendChild(tr);
+  }
+
+  function renderBookingTable(){
+    let bookings = filteredBookings();
+    bookings.sort((a,b)=>{
+      const av = a[bookingSort.col], bv = b[bookingSort.col];
+      let cmp;
+      if (typeof av === 'string') cmp = (av||'').localeCompare(bv||'');
+      else cmp = av - bv;
+      return bookingSort.dir === 'asc' ? cmp : -cmp;
+    });
+    document.getElementById('bookingTableCount').innerHTML = 'พบ <b>'+bookings.length+'</b> รายการจอง';
+    renderBookingTableHead();
+
+    const totalPages = Math.max(1, Math.ceil(bookings.length/BOOKING_PAGE_SIZE));
+    if (bookingPage >= totalPages) bookingPage = totalPages-1;
+    const pageRows = bookings.slice(bookingPage*BOOKING_PAGE_SIZE, bookingPage*BOOKING_PAGE_SIZE + BOOKING_PAGE_SIZE);
+
+    const tbody = document.querySelector('#bookingTable tbody');
+    tbody.innerHTML = '';
+    if (pageRows.length===0){
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td colspan="'+BOOKING_COLS.length+'" class="empty-state">ไม่พบข้อมูลตามตัวกรองนี้</td>';
+      tbody.appendChild(tr);
+    }
+    pageRows.forEach(b=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>'+b.bookingNo+'</td>'+
+        '<td>'+(b.prebookDate||'-')+'</td>'+
+        '<td class="strong">'+b.model+'</td>'+
+        '<td>'+b.capacity+'</td>'+
+        '<td>'+b.color+'</td>'+
+        '<td>'+b.shopName+'</td>'+
+        '<td>'+b.area+'</td>'+
+        '<td class="num strong">'+fmtMoney(b.amount)+'</td>'+
+        '<td>'+(b.source||'-')+'</td>'+
+        '<td>'+(b.depositStatus||'-')+'</td>';
+      tbody.appendChild(tr);
+    });
+
+    const pager = document.getElementById('bookingPager');
+    pager.innerHTML = '';
+    const prevBtn = document.createElement('button'); prevBtn.textContent = '← ก่อนหน้า'; prevBtn.disabled = bookingPage===0;
+    prevBtn.addEventListener('click', ()=>{ bookingPage--; renderBookingTable(); });
+    const nextBtn = document.createElement('button'); nextBtn.textContent = 'ถัดไป →'; nextBtn.disabled = bookingPage>=totalPages-1;
+    nextBtn.addEventListener('click', ()=>{ bookingPage++; renderBookingTable(); });
+    const info = document.createElement('span'); info.textContent = 'หน้า '+(bookingPage+1)+' / '+totalPages;
+    pager.appendChild(prevBtn); pager.appendChild(info); pager.appendChild(nextBtn);
+  }
+
+  // ---------- CSV export (Booking Detail, respects current filters + sort) ----------
+  const EXPORT_COLS = [
+    { key: 'bookingNo', label: 'Booking No.' },
+    { key: 'prebookDate', label: 'Prebook Date' },
+    { key: 'txnDate', label: 'Transaction Date' },
+    { key: 'pickupDate', label: 'Pick-up Date' },
+    { key: 'status', label: 'Booking Status' },
+    { key: 'model', label: 'Model' },
+    { key: 'capacity', label: 'Capacity' },
+    { key: 'color', label: 'Color' },
+    { key: 'qty', label: 'Qty' },
+    { key: 'amount', label: 'Amount' },
+    { key: 'shopCode', label: 'Shop Code' },
+    { key: 'shopName', label: 'Shop Name' },
+    { key: 'region', label: 'Region' },
+    { key: 'area', label: 'Area' },
+    { key: 'type', label: 'Type Shop' },
+    { key: 'size', label: 'Size Shop' },
+    { key: 'province', label: 'Province' },
+    { key: 'source', label: 'Source' },
+    { key: 'payment', label: 'Payment Method' },
+    { key: 'depositStatus', label: 'Deposit Status' },
+    { key: 'pickUpStatus', label: 'Pick Up Status' },
+  ];
+
+  function csvEscape(val){
+    if (val === null || val === undefined) return '';
+    const s = String(val);
+    if (/[",\n]/.test(s)) return '"' + s.replace(/"/g,'""') + '"';
+    return s;
+  }
+
+  function exportBookingsCsv(){
+    let bookings = filteredBookings();
+    bookings.sort((a,b)=>{
+      const av = a[bookingSort.col], bv = b[bookingSort.col];
+      let cmp;
+      if (typeof av === 'string') cmp = (av||'').localeCompare(bv||'');
+      else cmp = av - bv;
+      return bookingSort.dir === 'asc' ? cmp : -cmp;
+    });
+    if (bookings.length === 0){
+      alert('ไม่มีข้อมูลรายการจองตามตัวกรองปัจจุบันให้ Export');
+      return;
+    }
+    const lines = [];
+    lines.push(EXPORT_COLS.map(c=>csvEscape(c.label)).join(','));
+    bookings.forEach(b=>{
+      lines.push(EXPORT_COLS.map(c=>csvEscape(b[c.key])).join(','));
+    });
+    const csvContent = '﻿' + lines.join('\r\n'); // BOM for correct Thai display in Excel
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const ts = (DATA.asOf || '').replace(/[^0-9]/g,'').slice(0,12) || 'export';
+    a.href = url;
+    a.download = 'Booking_Detail_' + ts + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  document.getElementById('exportCsvBtn').addEventListener('click', exportBookingsCsv);
+
+  // ---------- master refresh ----------
+  function onFilterChange(){
+    renderAllFilterUI();
+    const totalShops = DATA.shops.length;
+    const matched = filteredShops().length;
+    document.getElementById('matchCount').innerHTML = 'ตรงกับ <b>'+matched+'</b> / '+totalShops+' สาขา';
+    renderKPI();
+    renderAreaAchChart();
+    renderRegionBarChart();
+    renderModelDonut();
+    renderColorBarChart();
+    renderTopShopsChart();
+    shopPage = 0; bookingPage = 0;
+    renderShopTable();
+    renderBookingTable();
+    renderDetailKPI();
+    renderDetailCharts();
+  }
+
+  // ---------- tab switching ----------
+  document.querySelectorAll('.tabnav-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.tabnav-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const target = btn.getAttribute('data-tab');
+      document.getElementById('tab-overview').hidden = target !== 'overview';
+      document.getElementById('tab-detail').hidden = target !== 'detail';
+    });
+  });
+
+  // ---------- theme toggle ----------
+  const themeBtn = document.getElementById('themeToggle');
+  themeBtn.addEventListener('click', ()=>{
+    const cur = document.documentElement.getAttribute('data-theme');
+    if (cur === 'dark'){
+      document.documentElement.removeAttribute('data-theme');
+      themeBtn.textContent = '🌙 Dark mode';
+    } else {
+      document.documentElement.setAttribute('data-theme','dark');
+      themeBtn.textContent = '☀️ Light mode';
+    }
+  });
+
+  // ---------- init ----------
+  document.getElementById('asOfText').textContent = DATA.asOf;
+  document.getElementById('asOfText2').textContent = DATA.asOf;
+  onFilterChange();
+
+})();
+</script>
+</body>
+</html>
